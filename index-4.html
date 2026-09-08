@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>MY LIFE — Life Simulator</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080d19;color:#eef3ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.hidden{display:none!important}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 0%,#203b70 0,transparent 32%),radial-gradient(circle at 100% 30%,#43236c 0,transparent 28%);opacity:.45}
+#app{min-height:100vh}.top{position:sticky;top:0;z-index:5;padding:15px max(16px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;background:#0b1020eF;border-bottom:1px solid #26304a;backdrop-filter:blur(14px)}.brand{font-size:24px;font-weight:900;letter-spacing:2px}.sub,.muted{color:#91a0bc;font-size:13px}.top-actions{display:flex;gap:8px}.top-actions button,.tabs button,.close{background:#151d31;border:1px solid #2b3652;border-radius:12px;padding:9px 12px}
+main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#11192a;border:1px solid #27334d;border-radius:20px;padding:18px;box-shadow:0 15px 45px #0004}.hero{text-align:center;font-size:62px;margin-top:10px}.panel>h1{text-align:center;margin:4px 0 8px;font-size:32px}.panel>p{text-align:center;max-width:650px;margin:0 auto 22px;line-height:1.7}
+.form-grid{display:grid;grid-template-columns:1fr 180px;gap:12px;max-width:600px;margin:auto}.form-grid label{display:grid;gap:7px;color:#aebbd2;font-size:13px}input,select{width:100%;background:#0b1220;border:1px solid #33405d;color:#fff;padding:12px;border-radius:12px;outline:none}.trait-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:850px;margin:16px auto}.trait{padding:14px;background:#0d1526;border:1px solid #2a3651;border-radius:15px;text-align:left}.trait small{display:block;color:#8797b4;margin-top:5px}.trait.selected{border-color:#6f8cff;box-shadow:0 0 0 2px #6f8cff33 inset}.primary{border:0;border-radius:13px;padding:12px 18px;background:linear-gradient(135deg,#637cff,#9c61ff);font-weight:800}.big{display:block;width:min(850px,100%);margin:18px auto 0;font-size:17px;padding:15px}.continue{max-width:850px;margin:12px auto 0;padding:12px;border-radius:12px;background:#0c1525;text-align:center}
+.life-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.profile{display:flex;align-items:center;gap:12px}.avatar{font-size:42px;background:#121d32;border:1px solid #2c3955;width:62px;height:62px;border-radius:18px;display:grid;place-items:center}.badge{font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px;background:#25304a;color:#b7c5ff}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:12px}.stat{background:#10182a;border:1px solid #26334e;border-radius:15px;padding:12px}.stat-top{display:flex;justify-content:space-between;gap:5px;color:#9aa9c3;font-size:12px}.stat b{display:block;font-size:21px;margin-top:5px}.bar{height:5px;background:#202a40;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:#6f8cff;border-radius:9px}
+.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:12px}.event-panel{min-height:370px}.event-title{display:flex;justify-content:space-between;color:#91a0bc;font-size:13px}.event-card{margin-top:18px;padding:22px;border-radius:18px;background:linear-gradient(145deg,#151f34,#0d1423);border:1px solid #2e3b58}.event-icon{font-size:52px}.event-card h2{font-size:27px;margin:10px 0 8px}.event-card p{color:#aebbd0;line-height:1.65}.effects{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.effect{padding:6px 9px;border-radius:999px;background:#1b263d;font-size:12px}.choices{display:grid;gap:8px}.choice{padding:13px 14px;border:1px solid #34415d;background:#121b2e;border-radius:12px;text-align:left}.choice:hover{background:#1a2740;border-color:#7187ff}.choice small{display:block;color:#8494b1;margin-top:3px}.activity-card{min-height:320px}.activity-choice{cursor:pointer;min-height:62px;font-size:15px}.activity-choice b{font-size:16px}.event-panel{overflow:visible}.event-panel #eventArea{display:block!important;visibility:visible!important;opacity:1!important;min-height:300px}.activity-choice{width:100%;display:block}
+.side{margin-bottom:12px}.side h3{margin:0 0 12px}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #202a40}.row:last-child{border-bottom:0}.value{font-weight:800;text-align:right}.good{color:#64dfa1}.bad{color:#ff7e91}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap}.tabs button.active{background:#637cff;border-color:#637cff}.list{display:grid;gap:8px}.list-item{padding:11px 12px;border-radius:12px;background:#0d1525;border:1px solid #222e48}.modal{position:fixed;inset:0;background:#0009;z-index:20;display:grid;place-items:center;padding:16px}.modal-card{position:relative;width:min(650px,100%);max-height:88vh;overflow:auto;background:#111a2c;border:1px solid #35415c;border-radius:20px;padding:22px}.close{position:absolute;right:14px;top:14px;font-size:22px}.continue b{color:#8ea1ff}
+@media(max-width:800px){main{padding:14px 10px 40px}.form-grid{grid-template-columns:1fr}.trait-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.life-head{align-items:flex-start}.event-card h2{font-size:23px}.top{padding:12px 10px}.brand{font-size:20px}}
+
+
+#authScreen{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:#070b15ee;backdrop-filter:blur(12px)}
+.auth-card{width:min(520px,100%);background:#111a2c;border:1px solid #34415e;border-radius:22px;padding:24px;box-shadow:0 25px 80px #0008}
+.auth-card h1{margin:0 0 8px;font-size:28px}.auth-card p{color:#9aa9c3;line-height:1.6}.auth-tabs{display:flex;gap:8px;margin:16px 0}.auth-tabs button{flex:1;background:#0c1424;border:1px solid #2d3954;border-radius:12px;padding:11px}.auth-tabs button.active{background:#637cff;border-color:#637cff}.auth-form{display:grid;gap:10px}.auth-form label{display:grid;gap:6px;color:#aebbd0;font-size:13px}.auth-msg{margin-top:10px;padding:10px;border-radius:10px;background:#0c1424;color:#aebbd0;font-size:13px}.auth-msg.err{color:#ff9aaa}.auth-msg.ok{color:#7ce4ad}.cloud-note{margin-top:14px;padding:11px;border-radius:12px;background:#0d1729;border:1px solid #25324b;font-size:12px;color:#91a0bc}
+.userbar{display:flex;align-items:center;gap:8px}.userbar button{background:#151d31;border:1px solid #2b3652;border-radius:12px;padding:9px 12px}
+
+</style>
+</head>
+<body>
+
+<div id="authScreen">
+  <div class="auth-card">
+    <div style="font-size:52px">☁️🎮</div>
+    <h1>MY LIFE ONLINE</h1>
+    <p>เข้าสู่ระบบเพื่อเก็บชีวิตของมึงไว้บนคลาวด์ เล่นต่อจากเครื่องอื่นได้ และมี Leaderboard แยกผู้เล่น</p>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="authMode('login')">เข้าสู่ระบบ</button>
+      <button id="signupTab" onclick="authMode('signup')">สมัครสมาชิก</button>
+    </div>
+    <div class="auth-form">
+      <label>อีเมล<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+      <label>รหัสผ่าน<input id="authPassword" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร"></label>
+      <label id="authNameWrap" class="hidden">ชื่อที่แสดง<input id="authName" maxlength="18" placeholder="นนท์"></label>
+      <button id="authBtn" class="primary big" onclick="submitAuth()">เข้าสู่ระบบ</button>
+    </div>
+    <div id="authMsg" class="auth-msg hidden"></div>
+    <div id="configMsg" class="cloud-note hidden"></div>
+    <div class="cloud-note">🔐 เซฟของแต่ละบัญชีแยกกันด้วย Supabase + Row Level Security</div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="top">
+    <div>
+      <div class="brand">MY LIFE</div>
+      <div class="sub">Life Simulator • 1 เทิร์น = 1 เดือน</div>
+    </div>
+    <div class="top-actions">
+      <button onclick="saveGame()">💾</button>
+      <button onclick="newGame()">🔄</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="creator" class="panel">
+      <div class="hero">🎮</div>
+      <h1>เริ่มต้นชีวิตใหม่</h1>
+      <p class="muted">มึงจะใช้ชีวิตตั้งแต่อายุ 18 จนถึง 80 ปี ทุกเดือนมีโอกาสเกิดเหตุการณ์ที่เปลี่ยนชีวิต</p>
+      <div class="form-grid">
+        <label>ชื่อ
+          <input id="nameInput" maxlength="18" value="นนท์">
+        </label>
+        <label>ตัวละคร
+          <select id="avatarInput">
+            <option>🧑🏻</option><option>👩🏻</option><option>🧑🏽</option><option>👩🏽</option>
+            <option>🧑🏻‍💻</option><option>🧑🏻‍🎨</option><option>🧑🏻‍🚀</option><option>🧑🏻‍🍳</option>
+          </select>
+        </label>
+      </div>
+      <div class="trait-grid">
+        <button class="trait selected" data-trait="smart" onclick="pickTrait(this)">🧠 หัวไว <small>ความรู้ +12</small></button>
+        <button class="trait" data-trait="lucky" onclick="pickTrait(this)">🍀 ดวงดี <small>โอกาส Rare+ สูงขึ้น</small></button>
+        <button class="trait" data-trait="healthy" onclick="pickTrait(this)">💪 แข็งแรง <small>สุขภาพ +12</small></button>
+        <button class="trait" data-trait="social" onclick="pickTrait(this)">😎 เข้าสังคมเก่ง <small>ความสุข +12</small></button>
+      </div>
+      <button class="primary big" onclick="startGame()">เริ่มชีวิต</button>
+      <div id="continueBox" class="continue hidden"></div>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="life-head">
+        <div class="profile">
+          <div id="avatar" class="avatar">🧑🏻</div>
+          <div><b id="playerName">นนท์</b><div id="lifeTime" class="muted">ปีที่ 1 — เดือนที่ 1 • อายุ 18</div></div>
+        </div>
+        <div id="rarityBadge" class="badge">COMMON</div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="grid">
+        <section class="panel event-panel">
+          <div class="event-title"><span id="monthPhase">📅 เดือนนี้</span><span id="chainTag"></span></div>
+          <div id="eventArea"><div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกได้ <b>1 อย่าง</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p><div class="choices"><button type="button" class="choice activity-choice" onclick="doActivity(0)"><b>💼 ทำงาน/ทำงานพิเศษ</b><small>หาเงินเพิ่ม แต่แลกด้วยความเหนื่อย</small></button><button type="button" class="choice activity-choice" onclick="doActivity(1)"><b>📚 เรียนและพัฒนาตัวเอง</b><small>เพิ่มความรู้เพื่อเปิดโอกาสใหม่</small></button><button type="button" class="choice activity-choice" onclick="doActivity(2)"><b>🏋️ ออกกำลังกาย</b><small>ดูแลร่างกาย</small></button><button type="button" class="choice activity-choice" onclick="doActivity(3)"><b>❤️ ใช้เวลากับคนสำคัญ</b><small>เติมความสุขและความสัมพันธ์</small></button><button type="button" class="choice activity-choice" onclick="doActivity(4)"><b>💰 ลงทุน</b><small>เสี่ยงเพื่ออนาคต</small></button><button type="button" class="choice activity-choice" onclick="doActivity(5)"><b>😴 พักผ่อนเต็มที่</b><small>ชาร์จพลังและฟื้นสุขภาพ</small></button><button type="button" class="choice activity-choice" onclick="doActivity(6)"><b>🎨 ทำงานอดิเรก</b><small>เพิ่มความสุขและความคิดสร้างสรรค์</small></button></div></div></div>
+        </section>
+
+        <aside>
+          <section class="panel side">
+            <h3>👤 ชีวิตของมึง</h3>
+            <div id="sideInfo"></div>
+          </section>
+          <section class="panel side">
+            <h3>🎯 เป้าหมาย</h3>
+            <div id="goals"></div>
+          </section>
+        </aside>
+      </div>
+
+      <nav class="tabs">
+        <button class="active" onclick="showTab('life',this)">❤️ ชีวิต</button>
+        <button onclick="showTab('assets',this)">💰 ทรัพย์สิน</button>
+        <button onclick="showTab('people',this)">👥 คนรอบตัว</button>
+        <button onclick="showTab('history',this)">📜 ประวัติ</button>
+      </nav>
+      <section id="tabArea" class="panel"></section>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
+<script>
+const KEY="mylife_final_v1";
+const TRAITS={smart:"🧠 หัวไว",lucky:"🍀 ดวงดี",healthy:"💪 แข็งแรง",social:"😎 เข้าสังคมเก่ง"};
+let G=null, selectedTrait="smart", currentEvent=null;
+
+const base=()=>({year:1,month:1,age:18,money:12500,health:87,happy:72,knowledge:54,salary:0,job:"นักศึกษา",debt:0,partner:false,married:false,children:0,house:false,car:false,business:false,invest:0,property:0,degree:false,pandemic:false,recession:false,unemployed:false,months:0,events:0,good:0,bad:0,name:"นนท์",avatar:"🧑🏻",trait:"smart",friends:45,family:75,partnerRel:0,history:[],achievements:[]});
+
+function pickTrait(el){document.querySelectorAll(".trait").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selectedTrait=el.dataset.trait}
+function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];localSave();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120)}
+function localSave(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
+function saveGame(){localSave();}
+function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120); setTimeout(showActivity,600);return true}}catch(e){}return false}
+function newGame(){if(confirm("เริ่มชีวิตใหม่? เซฟเดิมจะถูกแทนที่")){localStorage.removeItem(KEY);location.reload()}}
+function money(n){return Math.round(n).toLocaleString("th-TH")+" ฿"}
+function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function render(){
+ if(!G) return;
+ document.getElementById("playerName").textContent=G.name;
+ document.getElementById("avatar").textContent=G.avatar;
+ document.getElementById("lifeTime").textContent=`ปีที่ ${G.year} — เดือนที่ ${G.month} • อายุ ${G.age} ปี`;
+ const stats=[
+  ["💰","เงิน",money(G.money),Math.min(100,G.money/1000)],
+  ["❤️","สุขภาพ",G.health, G.health],
+  ["😊","ความสุข",G.happy,G.happy],
+  ["🧠","ความรู้",G.knowledge,G.knowledge],
+  ["💼","รายได้",G.salary?money(G.salary)+"/ด.":"—",Math.min(100,G.salary/1000)]
+ ];
+ document.getElementById("stats").innerHTML=stats.map(s=>`<div class="stat"><div class="stat-top"><span>${s[0]} ${s[1]}</span></div><b>${s[2]}</b><div class="bar"><i style="width:${clamp(s[3])}%"></i></div></div>`).join("");
+ document.getElementById("sideInfo").innerHTML=[
+  ["💼 อาชีพ",G.job],["🏦 หนี้",money(G.debt)],["🏠 บ้าน",G.house?"มี":"ไม่มี"],
+  ["🚗 รถ",G.car?"มี":"ไม่มี"],["🏢 ธุรกิจ",G.business?"มี":"ไม่มี"],["📈 เงินลงทุน",money(G.invest)],
+  ["🎓 การศึกษา",G.degree?"จบปริญญา":"ยังไม่จบ"],["❤️ ความสัมพันธ์",G.married?"แต่งงานแล้ว":G.partner?"มีแฟน":"โสด"],["👶 ลูก",G.children+" คน"]
+ ].map(r=>`<div class="row"><span>${r[0]}</span><span class="value">${r[1]}</span></div>`).join("");
+ const goals=[
+  [G.degree,"🎓 เรียนจบมหาวิทยาลัย"],[G.house,"🏠 มีบ้าน"],[G.business,"🏢 สร้างธุรกิจ"],[G.married,"💍 แต่งงาน"],
+  [G.children>=2,"👶 มีลูก 2 คน"],[G.money>=1000000,"💰 มีเงิน 1 ล้านบาท"],[G.health>=90,"💪 สุขภาพ 90+"]
+ ];
+ document.getElementById("goals").innerHTML=goals.map(g=>`<div class="row"><span>${g[0]?"✅":"⬜"} ${g[1]}</span></div>`).join("");
+ document.getElementById("rarityBadge").textContent=currentEvent?.r||"MONTHLY";
+}
+
+function statEffect(label,val){let sign=val>=0?"+":"";return `<span class="effect ${val>=0?"good":"bad"}">${label} ${sign}${val}</span>`}
+function apply(c){
+ for(const [k,v] of Object.entries(c||{})){if(["message","good","achievement"].includes(k))continue;if(typeof G[k]==="number")G[k]+=v;else G[k]=v}
+ G.health=clamp(G.health);G.happy=clamp(G.happy);G.knowledge=clamp(G.knowledge);G.friends=clamp(G.friends);G.family=clamp(G.family);G.partnerRel=clamp(G.partnerRel);
+ if(c?.good)G.good++; else G.bad++;
+ if(c?.achievement && !G.achievements.includes(c.achievement))G.achievements.push(c.achievement);
+ if(c?.message)G.history.unshift(`${G.age} ปี ${G.month} เดือน — ${c.message}`);
+}
+
+const EVENTS=[
+ {r:"COMMON",w:60,icon:"☀️",title:"เดือนธรรมดา",desc:"ไม่มีอะไรหวือหวา แต่ชีวิตกำลังเดินหน้า งาน เงิน และความสัมพันธ์ยังต้องดูแล",choices:[
+  ["พักผ่อน", {happy:4,health:2,message:"พักเต็มที่จนมีแรงขึ้น"}],["อ่านหนังสือ",{knowledge:4,happy:-1,message:"ใช้เวลาพัฒนาตัวเอง"}],["ทำงานเพิ่ม",{money:3500,happy:-3,health:-2,message:"รับงานพิเศษได้เงินเพิ่ม"}]]},
+ {r:"COMMON",w:60,icon:"💰",title:"เงินเดือนออก",desc:"รายได้ประจำเข้าบัญชี และค่าใช้จ่ายประจำกำลังรออยู่",choices:[["เก็บเงิน",{money:1000,happy:1,message:"วางแผนการเงินดีขึ้น"}],["ซื้อของที่อยากได้",{money:-2500,happy:8,message:"ให้รางวัลตัวเอง"}]]},
+ {r:"COMMON",w:60,icon:"👨‍👩‍👧",title:"ครอบครัว",desc:"วันนี้ครอบครัวต้องการเวลาจากมึง",choices:[["กลับบ้าน",{money:-1200,happy:8,family:8,message:"ใช้เวลากับครอบครัว"}],["ทำงานต่อ",{money:1800,family:-5,happy:-2,message:"เลือกงานก่อนครอบครัว"}]]},
+ {r:"COMMON",w:60,icon:"🏋️",title:"เริ่มดูแลตัวเอง",desc:"มึงเริ่มจริงจังกับสุขภาพ",choices:[["ออกกำลังกาย",{health:6,happy:3,message:"สุขภาพดีขึ้น"}],["ไม่เอาดีกว่า",{happy:-1,message:"ยังคงใช้ชีวิตเหมือนเดิม"}]]},
+ {r:"UNCOMMON",w:25,icon:"💼",title:"ข้อเสนองานใหม่",desc:"บริษัทคู่แข่งเสนอเงินเดือนสูงกว่า แต่ต้องเริ่มใหม่",choices:[["รับงาน",{salary:12000,job:"พนักงานบริษัท",unemployed:false,knowledge:2,message:"ย้ายงานไปบริษัทใหม่"}],["อยู่ที่เดิม",{happy:2,message:"เลือกความมั่นคง"}]]},
+ {r:"UNCOMMON",w:25,icon:"🎓",title:"โอกาสเรียนต่อ",desc:"มีทุนบางส่วนสำหรับหลักสูตรที่ช่วยเปลี่ยนอนาคต",choices:[["เรียน",{money:-7000,knowledge:12,degree:true,message:"ลงทุนกับการศึกษา",achievement:"📚 คนรักการเรียน"}],["ไม่เรียน",{money:1500,message:"เก็บเงินไว้ก่อน"}]]},
+ {r:"UNCOMMON",w:25,icon:"❤️",title:"พบคนถูกใจ",desc:"คนคนหนึ่งเข้ามาทำให้ชีวิตมีสีสัน",choices:[["ทำความรู้จัก",{partner:true,partnerRel:20,happy:8,message:"เริ่มต้นความสัมพันธ์"}],["โฟกัสงาน",{knowledge:3,message:"ยังไม่พร้อมมีความรัก"}]]},
+ {r:"UNCOMMON",w:25,icon:"🚗",title:"รถมือสองราคาดี",desc:"เจอรถสภาพดีที่ราคาไม่แรง",choices:[["ซื้อ",{money:-85000,car:true,happy:5,message:"ซื้อรถคันแรก"}],["ผ่าน",{money:500,message:"ประหยัดเงินก้อนใหญ่"}]]},
+ {r:"RARE",w:10,icon:"📈",title:"หุ้นพุ่งแรง",desc:"สินทรัพย์ที่มึงถืออยู่ทะยานขึ้นจากข่าวใหญ่",choices:[["ขายทำกำไร",{money:45000,invest:-20000,message:"ขายหุ้นทำกำไร"}],["ถือต่อ",{invest:35000,happy:3,message:"ถือการลงทุนต่อ"}]]},
+ {r:"RARE",w:10,icon:"🏠",title:"บ้านในฝัน",desc:"โครงการใหม่เปิดขายในราคาที่มึงพอเอื้อมถึง",choices:[["ซื้อบ้าน",{money:-450000,house:true,property:450000,happy:12,message:"มีบ้านเป็นของตัวเอง",achievement:"🏠 เจ้าของบ้าน"}],["ยังไม่ซื้อ",{money:5000,message:"รอโอกาสที่เหมาะกว่า"}]]},
+ {r:"RARE",w:10,icon:"🚀",title:"ธุรกิจโตแบบก้าวกระโดด",desc:"ธุรกิจเล็ก ๆ ของมึงได้ลูกค้ารายใหญ่",choices:[["ขยายกิจการ",{money:70000,salary:45000,business:true,happy:10,message:"ธุรกิจเติบโตครั้งใหญ่",achievement:"🚀 ผู้ประกอบการ"}],["ไม่เสี่ยง",{money:18000,message:"รับกำไรแล้วพอ"}]]},
+ {r:"LEGENDARY",w:4,icon:"🎉",title:"ถูกรางวัลที่ 1!",desc:"ชีวิตมึงเปลี่ยนในคืนเดียว",choices:[["รับเงิน",{money:6000000,happy:25,message:"ถูกรางวัลที่ 1",achievement:"🎰 เศรษฐีสายฟ้า"}],["บริจาคบางส่วน",{money:4500000,happy:35,family:15,message:"แบ่งเงินไปช่วยคนอื่น",achievement:"❤️ ผู้ให้"}]]},
+ {r:"LEGENDARY",w:4,icon:"🍀",title:"ได้รับมรดก",desc:"ญาติทิ้งทรัพย์สินก้อนใหญ่ไว้ให้",choices:[["รับมรดก",{money:1800000,property:900000,happy:18,message:"ได้รับมรดก",achievement:"🍀 ทายาท"}],["จัดการอย่างระมัดระวัง",{money:1000000,invest:800000,knowledge:6,message:"แบ่งมรดกไปลงทุน"}]]},
+ {r:"???",w:1,icon:"🌌",title:"โอกาสครั้งเดียวในชีวิต",desc:"มีข้อเสนอที่ไม่มีใครอธิบายได้ว่ามันมาจากไหน",choices:[["เสี่ยง",{money:3000000,knowledge:20,happy:20,message:"คว้าโอกาสลึกลับ",achievement:"🌌 ???"}],["ปฏิเสธ",{health:5,knowledge:8,message:"เลือกความปลอดภัย"}]]},
+ {r:"UNCOMMON",w:25,icon:"💔",title:"ความสัมพันธ์มีปัญหา",desc:"ความเห็นต่างสะสมจนเริ่มหนักขึ้น",choices:[["คุยกัน",{partnerRel:15,happy:3,message:"ช่วยกันแก้ปัญหา"}],["เลิกกัน",{partner:false,married:false,partnerRel:-30,happy:-12,message:"จบความสัมพันธ์"}]]},
+ {r:"RARE",w:10,icon:"⚖️",title:"ปัญหาทางกฎหมาย",desc:"มีข้อพิพาทที่ต้องจัดการก่อนจะบานปลาย",choices:[["จ้างทนาย",{money:-50000,happy:-2,message:"จัดการคดีอย่างเป็นระบบ"}],["สู้เอง",{money:-15000,happy:-10,knowledge:5,message:"ประหยัดค่าทนายแต่เครียดหนัก"}]]},
+ {r:"RARE",w:10,icon:"🔥",title:"ไฟไหม้บ้าน",desc:"เหตุฉุกเฉินทำให้ทรัพย์สินเสียหาย",choices:[["ซ่อมทันที",{money:-160000,property:-120000,health:-5,happy:-12,message:"ซ่อมบ้านหลังเหตุไฟไหม้"}],["ปล่อยไว้ก่อน",{property:-180000,happy:-20,message:"บ้านเสียหายหนัก"}]]},
+ {r:"UNCOMMON",w:25,icon:"📉",title:"การลงทุนขาดทุน",desc:"ตลาดผันผวนแรง เงินลงทุนหายไปบางส่วน",choices:[["ขายตัดขาดทุน",{invest:-Math.round(G.invest*.5),happy:-5,message:"ยอมขาดทุนเพื่อหยุดเลือด"}],["ถือรอ",{happy:-2,message:"อดทนรอตลาดฟื้น"}]]},
+ {r:"RARE",w:10,icon:"🌪️",title:"ภัยธรรมชาติ",desc:"พายุรุนแรงกระทบพื้นที่ที่มึงอยู่",choices:[["อพยพ",{money:-12000,health:3,happy:-4,message:"ปลอดภัยจากภัยธรรมชาติ"}],["อยู่บ้าน",{money:-40000,health:-15,happy:-15,message:"ทรัพย์สินเสียหาย"}]]}
+];
+
+function weightedPick(){
+ let arr=EVENTS.filter(e=>G.age<80);
+ if(G.trait==="lucky")arr=arr.map(e=>({...e,w:e.w*(e.r==="RARE"?1.7:e.r==="LEGENDARY"?2.3:e.r==="???"?3:1)}));
+ let total=arr.reduce((a,e)=>a+e.w,0),x=Math.random()*total;
+ for(const e of arr){x-=e.w;if(x<=0)return e}return arr[0]
+}
+function chainEvent(){
+ if(G.recession&&G.unemployed&&G.money<7000)return {r:"CHAIN",icon:"💸",title:"เงินเริ่มหมด",desc:"เศรษฐกิจยังไม่ฟื้น งานใหม่ก็ยังหาไม่ได้ ค่าใช้จ่ายเริ่มกินเงินเก็บ",choices:[
+  ["กู้เงิน",{money:50000,debt:60000,message:"กู้เงินประคองชีวิต"}],
+  ["หางานใหม่",{salary:28000,job:"พนักงานบริษัท",unemployed:false,money:5000,message:"ได้งานใหม่ท่ามกลางวิกฤต",achievement:"💼 นักสู้ตลาดแรงงาน"}],
+  ["เริ่มธุรกิจ",{business:true,salary:35000,money:-10000,unemployed:false,message:"เริ่มธุรกิจฝ่าวิกฤต",achievement:"🔥 กล้าสู้"}]]};
+ if(G.recession&&G.salary>0&&!G.unemployed&&Math.random()<.45)return {r:"CHAIN",icon:"🏢",title:"บริษัทเริ่มปลดพนักงาน",desc:"เศรษฐกิจถดถอยจนบริษัทต้องลดต้นทุน มึงถูกเรียกเข้าห้องประชุม",choices:[
+  ["ยอมลดเงินเดือน",{salary:-Math.round(G.salary*.2),happy:-5,message:"ยอมลดเงินเดือนเพื่อรักษางาน"}],
+  ["ลาออก",{salary:-G.salary,job:"ว่างงาน",unemployed:true,happy:-12,message:"ลาออกและเข้าสู่ช่วงตกงาน"}]]};
+ return null;
+}
+const ACTIVITIES=[
+ ["💼","ทำงาน/ทำงานพิเศษ","หาเงินเพิ่ม แต่แลกด้วยความเหนื่อย",{money:4500,happy:-2,health:-1}],
+ ["📚","เรียนและพัฒนาตัวเอง","เพิ่มความรู้เพื่อเปิดโอกาสใหม่ในอนาคต",{knowledge:6,happy:-1,money:-500}],
+ ["🏋️","ออกกำลังกาย","ดูแลร่างกายให้พร้อมรับชีวิตระยะยาว",{health:7,happy:3}],
+ ["❤️","ใช้เวลากับคนสำคัญ","เติมความสุขและความสัมพันธ์",{happy:6,family:5,friends:4,partnerRel:8,money:-800}],
+ ["💰","ลงทุน","เอาเงินก้อนเล็กไปเสี่ยงเพื่ออนาคต",{invest:12000,money:-10000,knowledge:2,happy:-1}],
+ ["😴","พักผ่อนเต็มที่","ชาร์จพลัง ลดความเครียด และฟื้นสุขภาพ",{health:5,happy:7}],
+ ["🎨","ทำงานอดิเรก","ใช้เวลากับสิ่งที่ชอบ เพิ่มความสุขและความคิดสร้างสรรค์",{happy:6,knowledge:2,money:-500}]
+];
+function showActivity(){
+ try{
+  currentEvent=null;
+  const area=document.getElementById("eventArea");
+  if(!area) return;
+  const phase=document.getElementById("monthPhase"), badge=document.getElementById("rarityBadge"), tag=document.getElementById("chainTag");
+  if(phase) phase.textContent="🎯 เลือกกิจกรรมประจำเดือน";
+  if(badge) badge.textContent="ACTION";
+  if(tag) tag.textContent="1 เดือน = 1 กิจกรรม";
+  area.replaceChildren();
+  const card=document.createElement("div"); card.className="event-card activity-card";
+  card.innerHTML='<div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือก <b>1 กิจกรรม</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p>';
+  const choices=document.createElement("div"); choices.className="choices";
+  ACTIVITIES.forEach((a,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="choice activity-choice";
+    const strong=document.createElement("b"); strong.textContent=a[0]+" "+a[1];
+    const small=document.createElement("small"); small.textContent=a[2];
+    b.append(strong,small); b.addEventListener("click",function(ev){ev.preventDefault();ev.stopPropagation();window.doActivity(i);}); choices.appendChild(b);
+  });
+  const random=document.createElement("button"); random.type="button"; random.className="primary big"; random.style.marginTop="12px"; random.textContent="🎲 สุ่มเหตุการณ์เลย"; random.addEventListener("click",nextEvent);
+  card.append(choices,random); area.appendChild(card);
+ }catch(err){
+  console.error("showActivity",err);
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎯</div><h2>เลือกกิจกรรม</h2><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์เลย</button></div>';
+ }
+}
+function doActivity(i){
+  const a=ACTIVITIES[Number(i)];
+  const area=document.getElementById("eventArea");
+  if(!G || !a || !area){
+    if(area) area.innerHTML='<div class="event-card"><h2>⚠️ กิจกรรมผิดพลาด</h2><button type="button" class="primary big" onclick="window.nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+    return;
+  }
+  // เปลี่ยนหน้าทันที ไม่รอ Supabase และไม่เรียก render ระหว่างสุ่ม
+  area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>เลือกกิจกรรมแล้ว กำลังหาเหตุการณ์ให้มึง</p></div>';
+  try{ apply(a[3]); }catch(e){ console.error(e); }
+  try{ if(!Array.isArray(G.history)) G.history=[]; G.history.unshift(G.age+' ปี '+G.month+' เดือน — กิจกรรม: '+a[1]); }catch(e){}
+  // ไม่แตะ network ก่อนแสดง event
+  window.nextEvent();
+}
+
+function showEventError(err){
+  console.error('EVENT ERROR',err);
+  const area=document.getElementById('eventArea');
+  if(!area)return;
+  area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>สุ่มเหตุการณ์ไม่สำเร็จ</h2><p>กดปุ่มด้านล่างเพื่อสุ่มใหม่</p><button type="button" class="primary big" id="retryEventBtn">🎲 สุ่มเหตุการณ์</button></div>';
+  const b=document.getElementById('retryEventBtn');
+  if(b)b.onclick=function(){window.nextEvent();};
+}
+
+function nextEvent(){
+  const area=document.getElementById('eventArea');
+  if(!area || !G){ showEventError(new Error('ไม่พบเกมหรือ eventArea')); return; }
+  try{
+    document.getElementById('monthPhase').textContent='🎲 เหตุการณ์ประจำเดือน';
+    document.getElementById('rarityBadge').textContent='ROLLING';
+    document.getElementById('chainTag').textContent='สุ่มเหตุการณ์';
+
+    // ใช้ EVENTS โดยตรงเท่านั้น: ไม่มี chainEvent / weightedPick / network
+    let pool=EVENTS;
+    if(!Array.isArray(pool) || pool.length===0) throw new Error('EVENTS ว่าง');
+    pool=pool.filter(function(e){return e && e.title && Array.isArray(e.choices) && e.choices.length>0;});
+    if(pool.length===0) throw new Error('ไม่มี event ที่ใช้ได้');
+
+    const e=pool[Math.floor(Math.random()*pool.length)];
+    currentEvent=e;
+    document.getElementById('rarityBadge').textContent=e.r || 'COMMON';
+    document.getElementById('chainTag').textContent='';
+
+    const card=document.createElement('div');
+    card.className='event-card';
+    const icon=document.createElement('div'); icon.className='event-icon'; icon.textContent=e.icon || '🎲';
+    const h=document.createElement('h2'); h.textContent=e.title;
+    const p=document.createElement('p'); p.textContent=e.desc || 'มีเหตุการณ์เกิดขึ้นในเดือนนี้';
+    const box=document.createElement('div'); box.className='choices';
+    card.append(icon,h,p,box);
+
+    e.choices.forEach(function(c,i){
+      if(!Array.isArray(c) || !c[1]) return;
+      const b=document.createElement('button'); b.type='button'; b.className='choice';
+      const strong=document.createElement('b'); strong.textContent=c[0] || 'เลือก';
+      const small=document.createElement('small'); small.textContent='เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน';
+      b.append(strong,small);
+      b.onclick=function(ev){ev.preventDefault(); ev.stopPropagation(); window.choose(i);};
+      box.appendChild(b);
+    });
+    if(box.children.length===0) throw new Error('ไม่มีตัวเลือก');
+    area.replaceChildren(card);
+  }catch(err){ showEventError(err); }
+}
+function drawEvent(){
+ try{
+  const e=currentEvent;
+  if(!e || !Array.isArray(e.choices) || !e.choices.length) throw new Error("เหตุการณ์ไม่มีตัวเลือก");
+  const badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag"),area=document.getElementById("eventArea");
+  if(!area) throw new Error("ไม่พบ eventArea");
+  if(badge) badge.textContent=e.r||"COMMON";
+  if(tag) tag.textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":"";
+  area.innerHTML="";
+  const card=document.createElement("div"); card.className="event-card";
+  card.innerHTML='<div class="event-icon">'+(e.icon||"🎲")+'</div>'+
+    '<h2>'+esc(e.title||"เหตุการณ์ประจำเดือน")+'</h2>'+
+    '<p>'+esc(e.desc||"มีเหตุการณ์เกิดขึ้นในเดือนนี้")+'</p>';
+  const choices=document.createElement("div"); choices.className="choices";
+  e.choices.forEach((c,i)=>{
+    if(!Array.isArray(c) || !c[1]) return;
+    const b=document.createElement("button"); b.type="button"; b.className="choice";
+    b.innerHTML='<b>'+esc(c[0]||"เลือก")+'</b><small>เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน</small>';
+    b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();window.choose(i);};
+    choices.appendChild(b);
+  });
+  if(!choices.children.length) throw new Error("เหตุการณ์ไม่มีตัวเลือกที่ใช้ได้");
+  card.appendChild(choices); area.appendChild(card);
+ }catch(err){
+  console.error("drawEvent",err);
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>แสดงเหตุการณ์ไม่ได้</h2><p>กูใส่ปุ่มสุ่มใหม่ไว้ให้แล้ว</p><button type="button" class="primary big" onclick="window.nextEvent()">🎲 สุ่มเหตุการณ์ใหม่</button></div>';
+ }
+}
+function choose(i){
+ const e=currentEvent,c=e.choices[i], before=G.money;
+ apply(c[1]);G.events++;currentEvent=null;render();
+ document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">✨</div><h2>ผลลัพธ์</h2><p>${c[1].message||"เดือนนี้จบลงแล้ว"}</p><div class="effects">${c[1].money?statEffect("💰 เงิน",c[1].money):""}${c[1].health?statEffect("❤️ สุขภาพ",c[1].health):""}${c[1].happy?statEffect("😊 ความสุข",c[1].happy):""}${c[1].knowledge?statEffect("🧠 ความรู้",c[1].knowledge):""}${c[1].salary?statEffect("💼 เงินเดือน",c[1].salary):""}</div><button class="primary" onclick="advance()">▶️ ไปเดือนถัดไป</button></div>`;
+ localSave();
+}
+function advance(){
+ if(G.salary>0&&!G.unemployed){G.money+=G.salary;G.money-=9000;if(G.house)G.money-=3500;if(G.car)G.money-=2200;if(G.business)G.money+=Math.round(G.salary*.18)}
+ else G.money-=6500;
+ if(G.debt>0){let pay=Math.min(G.debt,Math.max(0,Math.round(G.debt*.025)));G.debt-=pay;G.money-=pay}
+ if(G.pandemic){G.happy-=1;if(Math.random()<.08)G.pandemic=false}
+ G.month++;G.months++;
+ if(G.month>12){G.month=1;G.year++;G.age++;yearly()}
+ if(G.money<0)G.happy-=3;
+ if(G.health<=0||G.age>=80){endGame();return}
+ localSave();showActivity();
+}
+function yearly(){
+ if(G.age===22&&!G.degree){G.degree=true;G.knowledge+=10;G.history.unshift("22 ปี — เรียนจบมหาวิทยาลัยและเริ่มต้นชีวิตการทำงาน")}
+ if(G.age===22&&G.job==="นักศึกษา"){G.job="พนักงานบริษัท";G.salary=18000}
+ if(G.age===25&&G.partner&&!G.married){G.married=true;G.happy+=10;G.history.unshift("25 ปี — ตัดสินใจแต่งงาน")}
+ if(G.age===28&&G.married&&G.children===0){G.children=1;G.money-=25000;G.happy+=12;G.history.unshift("28 ปี — มีลูกคนแรก")}
+ if(G.age===35&&G.married&&G.children===1){G.children=2;G.money-=30000;G.happy+=10;G.history.unshift("35 ปี — มีลูกคนที่สอง")}
+ if(G.age%5===0)G.knowledge+=2;
+}
+function showTab(tab,btn){
+ document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+ let html="";
+ if(tab==="life")html=`<h3>📊 สถานะชีวิต</h3><div class="row"><span>เดือนที่เล่น</span><b>${G.months}</b></div><div class="row"><span>เหตุการณ์</span><b>${G.events}</b></div><div class="row"><span>เหตุการณ์ดี/ร้าย</span><b>${G.good}/${G.bad}</b></div><div class="row"><span>Trait</span><b>${TRAITS[G.trait]}</b></div>`;
+ if(tab==="assets")html=`<h3>💰 ทรัพย์สิน</h3><div class="row"><span>เงินสด</span><b>${money(G.money)}</b></div><div class="row"><span>บ้าน</span><b>${G.house?"มี • "+money(G.property):"ไม่มี"}</b></div><div class="row"><span>รถ</span><b>${G.car?"มี":"ไม่มี"}</b></div><div class="row"><span>ลงทุน</span><b>${money(G.invest)}</b></div><div class="row"><span>หนี้</span><b>${money(G.debt)}</b></div>`;
+ if(tab==="people")html=`<h3>👥 คนรอบตัว</h3><div class="row"><span>ครอบครัว</span><b>${G.family}/100</b></div><div class="row"><span>เพื่อน</span><b>${G.friends}/100</b></div><div class="row"><span>ความรัก</span><b>${G.partner?(G.married?"คู่ชีวิต":"แฟน"):"โสด"}</b></div><div class="row"><span>ลูก</span><b>${G.children} คน</b></div>`;
+ if(tab==="history")html=`<h3>📜 ประวัติชีวิต</h3><div class="list">${(G.history.length?G.history:["ยังไม่มีเหตุการณ์สำคัญ"]).slice(0,40).map(x=>`<div class="list-item">${esc(x)}</div>`).join("")}</div>`;
+ document.getElementById("tabArea").innerHTML=html;
+}
+function endGame(){
+ localSave();document.getElementById("modalContent").innerHTML=`<div style="text-align:center"><div style="font-size:58px">🏆</div><h2>จบชีวิตของ ${esc(G.name)}</h2><p class="muted">อายุ ${G.age} ปี • ใช้ชีวิตมา ${G.months} เดือน</p><div class="list"><div class="list-item">💰 เงินสุดท้าย: <b>${money(G.money)}</b></div><div class="list-item">❤️ สุขภาพ: <b>${G.health}</b></div><div class="list-item">😊 ความสุข: <b>${G.happy}</b></div><div class="list-item">🧠 ความรู้: <b>${G.knowledge}</b></div><div class="list-item">🏆 Achievement: <b>${G.achievements.length}</b></div></div><button class="primary big" onclick="newGame()">เริ่มชีวิตใหม่</button></div>`;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+window.doActivity=doActivity; window.nextEvent=nextEvent; window.choose=choose; window.advance=advance;
+window.addEventListener("load",()=>{if(localStorage.getItem(KEY)){document.getElementById("continueBox").classList.remove("hidden");document.getElementById("continueBox").innerHTML=`มีเซฟของ <b>ชีวิตเดิม</b> อยู่ในเครื่อง <button class="primary" onclick="loadGame()">▶️ เล่นต่อ</button>`}});
+render();
+
+</script>
+
+<script>
+
+/* ===== MY LIFE ONLINE / SUPABASE =====
+   Put your project's URL and PUBLISHABLE/ANON key here.
+   Never put a service_role key in this file.
+*/
+const SUPABASE_URL = "https://xmdfulbbbuaytjgmajbn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hp-Dj-J7ea6SvimMJyOsjw_RDIfpi5g";
+let sb = null;
+let onlineUser = null;
+let authIsSignup = false;
+let sdkLoading = null;
+
+function loadSupabaseSDK(){
+  if(window.supabase?.createClient) return Promise.resolve();
+  if(sdkLoading) return sdkLoading;
+  sdkLoading=new Promise((resolve,reject)=>{
+    const urls=[
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+      "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ];
+    let i=0;
+    const next=()=>{
+      if(window.supabase?.createClient){resolve();return;}
+      if(i>=urls.length){reject(new Error("โหลด Supabase SDK ไม่สำเร็จ — อาจถูกบล็อกโดยเครือข่ายหรือเบราว์เซอร์"));return;}
+      const sc=document.createElement("script"); sc.src=urls[i++]; sc.async=true;
+      const timer=setTimeout(()=>{sc.remove();next();},2500);
+      sc.onload=()=>{clearTimeout(timer); if(window.supabase?.createClient) resolve(); else next();};
+      sc.onerror=()=>{clearTimeout(timer); sc.remove(); next();};
+      document.head.appendChild(sc);
+    };
+    next();
+  });
+  return sdkLoading;
+}
+
+function authMode(mode){
+  authIsSignup = mode === "signup";
+  document.getElementById("loginTab").classList.toggle("active", !authIsSignup);
+  document.getElementById("signupTab").classList.toggle("active", authIsSignup);
+  document.getElementById("authNameWrap").classList.toggle("hidden", !authIsSignup);
+  document.getElementById("authBtn").textContent = authIsSignup ? "สมัครสมาชิก" : "เข้าสู่ระบบ";
+  setAuthMsg("");
+}
+function setAuthMsg(msg, type=""){
+  const el=document.getElementById("authMsg");
+  el.textContent=msg;
+  el.className="auth-msg"+(msg?"":" hidden")+(type?" "+type:"");
+}
+function configured(){
+  return SUPABASE_URL.startsWith("http") && !SUPABASE_URL.includes("YOUR_") &&
+         SUPABASE_KEY && !SUPABASE_KEY.includes("YOUR_");
+}
+function withTimeout(promise, ms=12000, label="Supabase"){
+  return Promise.race([promise, new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+" ใช้เวลานานเกินไป กรุณาตรวจ URL/Key และการตั้งค่า Auth แล้วลองใหม่")),ms))]);
+}
+async function submitAuth(){
+  if(!configured()){setAuthMsg("ยังไม่ได้ใส่ Supabase URL กับ Publishable/Anon Key ในเกม", "err"); return;}
+  try{ if(!sb){ setAuthMsg("กำลังโหลดระบบออนไลน์..."); await loadSupabaseSDK(); sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); } }catch(e){ setAuthMsg("โหลดระบบออนไลน์ไม่สำเร็จ: "+e.message,"err"); return; }
+  const email=document.getElementById("authEmail").value.trim();
+  const password=document.getElementById("authPassword").value;
+  const name=document.getElementById("authName").value.trim() || "ผู้เล่น";
+  if(!email || password.length<6){setAuthMsg("ใส่อีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร", "err");return;}
+  setAuthMsg(authIsSignup ? "กำลังสมัครสมาชิก..." : "กำลังเข้าสู่ระบบ...");
+  try{
+    let result;
+    if(authIsSignup){
+      result=await withTimeout(sb.auth.signUp({email,password,options:{data:{display_name:name}}}),12000,"การสมัครสมาชิก");
+      if(result.error){setAuthMsg(result.error.message,"err");return;}
+      if(!result.data.session){setAuthMsg("สมัครสำเร็จแล้ว ตรวจอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ","ok");return;}
+    }else{
+      result=await withTimeout(sb.auth.signInWithPassword({email,password}),12000,"การเข้าสู่ระบบ");
+      if(result.error){setAuthMsg(result.error.message,"err");return;}
+    }
+    await bootOnline(result.data.user);
+  }catch(e){
+    console.error(e);
+    setAuthMsg("เชื่อมต่อ Supabase ไม่สำเร็จ: "+(e?.message||e),"err");
+  }
+}
+async function bootOnline(user){
+  onlineUser=user;
+  try{
+    setAuthMsg("กำลังโหลดข้อมูลบัญชี...");
+    const {data: profile,error: profileError}=await withTimeout(sb.from("profiles").select("*").eq("id",user.id).maybeSingle(),12000,"โหลดโปรไฟล์");
+    if(profileError) throw profileError;
+    if(!profile){
+      const {error}=await withTimeout(sb.from("profiles").insert({id:user.id,display_name:user.user_metadata?.display_name||"ผู้เล่น",avatar:"🧑🏻"}),12000,"สร้างโปรไฟล์");
+      if(error) throw error;
+    }
+    await loadCloudGame();
+    document.getElementById("authScreen").classList.add("hidden");
+    if(!G){
+      document.getElementById("creator").classList.remove("hidden");
+      document.getElementById("game").classList.add("hidden");
+    }else{
+      document.getElementById("creator").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      render(); showActivity(); setTimeout(showActivity,120); setTimeout(showActivity,600);
+    }
+    addOnlineUserBar();
+  }catch(e){
+    console.error(e);
+    setAuthMsg("เข้าสู่ระบบได้ แต่โหลดข้อมูล Cloud ไม่สำเร็จ: "+(e?.message||e),"err");
+  }
+}
+async function loadCloudGame(){
+  const {data,error}=await withTimeout(sb.from("games").select("state").eq("user_id",onlineUser.id).maybeSingle(),12000,"โหลดเซฟ");
+  if(error) throw error;
+  if(data?.state) G=data.state;
+}
+async function cloudSave(){
+  if(!sb || !onlineUser || !G)return;
+  try{
+    const {error}=await withTimeout(sb.from("games").upsert({user_id:onlineUser.id,state:G,updated_at:new Date().toISOString()},{onConflict:"user_id"}),12000,"บันทึกเกม");
+    if(error) throw error;
+    await updateLeaderboard();
+  }catch(e){ console.warn("Cloud save:",e); }
+}
+async function updateLeaderboard(){
+  if(!sb||!onlineUser||!G)return;
+  const display=G.name||onlineUser.user_metadata?.display_name||"ผู้เล่น";
+  const {error}=await withTimeout(sb.from("leaderboard").upsert({user_id:onlineUser.id,name:display,avatar:G.avatar||"🧑🏻",age:G.age,money:Math.round(G.money||0),happiness:Math.round(G.happy||0),knowledge:Math.round(G.knowledge||0),updated_at:new Date().toISOString()},{onConflict:"user_id"}),12000,"อัปเดต Leaderboard");
+  if(error) throw error;
+}
+async function showLeaderboard(){
+  if(!sb){alert("ยังไม่ได้เชื่อมต่อฐานข้อมูล");return;}
+  try{
+    const {data,error}=await withTimeout(sb.from("leaderboard").select("*").order("money",{ascending:false}).limit(20),12000,"โหลด Leaderboard");
+    if(error) throw error;
+    document.getElementById("modalContent").innerHTML=`<h2>🏆 Leaderboard</h2><p class="muted">20 อันดับผู้เล่นที่มีเงินมากที่สุด</p><div class="list">${(data||[]).map((x,i)=>`<div class="list-item"><b>#${i+1} ${esc(x.avatar||"🧑🏻")} ${esc(x.name||"ผู้เล่น")}</b><br><span class="muted">อายุ ${x.age} • 💰 ${money(x.money)} • 😊 ${x.happiness} • 🧠 ${x.knowledge}</span></div>`).join("")||"<div class='list-item'>ยังไม่มีผู้เล่น</div>"}</div>`;
+    document.getElementById("modal").classList.remove("hidden");
+  }catch(e){alert("โหลด Leaderboard ไม่สำเร็จ: "+(e?.message||e));}
+}
+async function signOutOnline(){
+  if(sb) await sb.auth.signOut();
+  onlineUser=null;G=null;location.reload();
+}
+
+function addOnlineUserBar(){
+  const top=document.querySelector(".top-actions");
+  if(!top||document.getElementById("onlineTools"))return;
+  const wrap=document.createElement("div");wrap.id="onlineTools";wrap.className="userbar";
+  wrap.innerHTML=`<button onclick="showLeaderboard()">🏆</button><button onclick="signOutOnline()">ออก</button>`;
+  top.prepend(wrap);
+}
+/* Override local save/load with cloud save for online mode. */
+const oldSaveGame=window.saveGame;
+window.saveGame=function(){ oldSaveGame(); cloudSave().catch(()=>{}); };
+const oldStartGame=window.startGame;
+window.startGame=function(){ oldStartGame(); setTimeout(()=>cloudSave().catch(()=>{}),300); };
+const oldChoose=window.choose;
+window.choose=function(i){ oldChoose(i); setTimeout(()=>cloudSave().catch(()=>{}),300); };
+const oldAdvance=window.advance;
+window.advance=function(){ oldAdvance(); setTimeout(()=>cloudSave().catch(()=>{}),300); };
+const oldNewGame=window.newGame;
+window.newGame=function(){
+  if(confirm("เริ่มชีวิตใหม่และแทนที่เซฟบนคลาวด์?")){
+    localStorage.removeItem(KEY);
+    G=null;
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("creator").classList.remove("hidden");
+  }
+};
+window.addEventListener("load",()=>{
+  const status=document.getElementById("authMsg");
+  // เกมต้องพร้อมเล่นทันที ไม่รอ Supabase
+  setAuthMsg("🎮 พร้อมเล่น — ระบบออนไลน์กำลังเชื่อมต่อเบื้องหลัง", "ok");
+  setTimeout(()=>initOnlineBackground(),120);
+});
+async function initOnlineBackground(){
+  if(!configured()) return;
+  try{
+    await loadSupabaseSDK();
+    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const sessionResult=await withTimeout(sb.auth.getSession(),4000,"ตรวจสอบบัญชี");
+    if(sessionResult.error) throw sessionResult.error;
+    const session=sessionResult.data?.session;
+    if(session) await bootOnline(session.user);
+    else setAuthMsg("☁️ ออนไลน์พร้อมใช้งาน — ยังไม่ได้เข้าสู่ระบบ", "ok");
+  }catch(e){
+    console.warn("Background Supabase:",e);
+    setAuthMsg("🎮 เล่นออฟไลน์ได้ — ระบบออนไลน์ยังไม่พร้อม", "err");
+  }
+}
+</script>
+
+
+<script>
+window.addEventListener("error",function(e){
+  const area=document.getElementById("eventArea");
+  if(area && G && !currentEvent){
+    area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>เกมเจอข้อผิดพลาด</h2><p>แต่ยังเล่นต่อได้</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+  }
+});
+</script>
+</body>
+</html>
