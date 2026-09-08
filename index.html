@@ -280,6 +280,7 @@ render();
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===== MY LIFE ONLINE / SUPABASE =====
    Put your project's URL and PUBLISHABLE/ANON key here.
@@ -386,6 +387,8 @@ function addOnlineUserBar(){
   top.prepend(wrap);
 }
 /* Override local save/load with cloud save for online mode. */
+const oldSaveGame=window.saveGame;
+window.saveGame=async function(){ oldSaveGame(); await cloudSave(); };
 const oldStartGame=window.startGame;
 window.startGame=async function(){
   oldStartGame();
