@@ -99,7 +99,7 @@ main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#1119
 
       <div class="grid">
         <section class="panel event-panel">
-          <div class="event-title"><span>📅 เดือนนี้</span><span id="chainTag"></span></div>
+          <div class="event-title"><span id="monthPhase">📅 เดือนนี้</span><span id="chainTag"></span></div>
           <div id="eventArea"></div>
         </section>
 
@@ -140,9 +140,9 @@ let G=null, selectedTrait="smart", currentEvent=null;
 const base=()=>({year:1,month:1,age:18,money:12500,health:87,happy:72,knowledge:54,salary:0,job:"นักศึกษา",debt:0,partner:false,married:false,children:0,house:false,car:false,business:false,invest:0,property:0,degree:false,pandemic:false,recession:false,unemployed:false,months:0,events:0,good:0,bad:0,name:"นนท์",avatar:"🧑🏻",trait:"smart",friends:45,family:75,partnerRel:0,history:[],achievements:[]});
 
 function pickTrait(el){document.querySelectorAll(".trait").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selectedTrait=el.dataset.trait}
-function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];saveGame();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();nextEvent()}
+function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];saveGame();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity()}
 function saveGame(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
-function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();nextEvent();return true}}catch(e){}return false}
+function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();return true}}catch(e){}return false}
 function newGame(){if(confirm("เริ่มชีวิตใหม่? เซฟเดิมจะถูกแทนที่")){localStorage.removeItem(KEY);location.reload()}}
 function money(n){return Math.round(n).toLocaleString("th-TH")+" ฿"}
 function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
@@ -222,8 +222,31 @@ function chainEvent(){
   ["ลาออก",{salary:-G.salary,job:"ว่างงาน",unemployed:true,happy:-12,message:"ลาออกและเข้าสู่ช่วงตกงาน"}]]};
  return null;
 }
+const ACTIVITIES=[
+ ["💼","ทำงาน/ทำงานพิเศษ","หาเงินเพิ่ม แต่แลกด้วยความเหนื่อย",{money:4500,happy:-2,health:-1}],
+ ["📚","เรียนและพัฒนาตัวเอง","เพิ่มความรู้เพื่อเปิดโอกาสใหม่ในอนาคต",{knowledge:6,happy:-1,money:-500}],
+ ["🏋️","ออกกำลังกาย","ดูแลร่างกายให้พร้อมรับชีวิตระยะยาว",{health:7,happy:3}],
+ ["❤️","ใช้เวลากับคนสำคัญ","เติมความสุขและความสัมพันธ์",{happy:6,family:5,friends:4,partnerRel:8,money:-800}],
+ ["💰","ลงทุน","เอาเงินก้อนเล็กไปเสี่ยงเพื่ออนาคต",{invest:12000,money:-10000,knowledge:2,happy:-1}],
+ ["😴","พักผ่อนเต็มที่","ชาร์จพลัง ลดความเครียด และฟื้นสุขภาพ",{health:5,happy:7}],
+ ["🎨","ทำงานอดิเรก","ใช้เวลากับสิ่งที่ชอบ เพิ่มความสุขและความคิดสร้างสรรค์",{happy:6,knowledge:2,money:-500}]
+];
+function showActivity(){
+ currentEvent=null;
+ document.getElementById("monthPhase").textContent="🎯 เลือกกิจกรรมประจำเดือน";
+ document.getElementById("rarityBadge").textContent="ACTION";
+ document.getElementById("chainTag").textContent="1 เดือน = 1 กิจกรรม";
+ document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกได้ 1 อย่าง ทุกการเลือกจะเปลี่ยนสถานะชีวิต แล้วค่อยเจอเหตุการณ์สุ่มประจำเดือน</p><div class="choices">${ACTIVITIES.map((a,i)=>`<button class="choice" onclick="doActivity(${i})"><b>${a[0]} ${a[1]}</b><small>${a[2]}</small></button>`).join("")}</div></div>`;
+}
+function doActivity(i){
+ const a=ACTIVITIES[i]; apply(a[3]); G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
+ render(); saveGame();
+ document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
+ nextEvent();
+}
 function nextEvent(){
  render();
+ document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
  let e=chainEvent();
  if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[
   ["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],
@@ -253,7 +276,7 @@ function advance(){
  if(G.month>12){G.month=1;G.year++;G.age++;yearly()}
  if(G.money<0)G.happy-=3;
  if(G.health<=0||G.age>=80){endGame();return}
- saveGame();nextEvent();
+ saveGame();showActivity();
 }
 function yearly(){
  if(G.age===22&&!G.degree){G.degree=true;G.knowledge+=10;G.history.unshift("22 ปี — เรียนจบมหาวิทยาลัยและเริ่มต้นชีวิตการทำงาน")}
@@ -378,7 +401,7 @@ async function bootOnline(user){
     }else{
       document.getElementById("creator").classList.add("hidden");
       document.getElementById("game").classList.remove("hidden");
-      render(); nextEvent();
+      render(); showActivity();
     }
     addOnlineUserBar();
   }catch(e){
