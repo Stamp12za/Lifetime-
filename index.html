@@ -309,76 +309,91 @@ function configured(){
   return SUPABASE_URL.startsWith("http") && !SUPABASE_URL.includes("YOUR_") &&
          SUPABASE_KEY && !SUPABASE_KEY.includes("YOUR_");
 }
+function withTimeout(promise, ms=12000, label="Supabase"){
+  return Promise.race([promise, new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+" ใช้เวลานานเกินไป กรุณาตรวจ URL/Key และการตั้งค่า Auth แล้วลองใหม่")),ms))]);
+}
 async function submitAuth(){
-  if(!configured()){setAuthMsg("ยังไม่ได้ใส่ Supabase URL กับ Publishable/Anon Key ใน game", "err"); return;}
+  if(!configured()){setAuthMsg("ยังไม่ได้ใส่ Supabase URL กับ Publishable/Anon Key ในเกม", "err"); return;}
   const email=document.getElementById("authEmail").value.trim();
   const password=document.getElementById("authPassword").value;
   const name=document.getElementById("authName").value.trim() || "ผู้เล่น";
   if(!email || password.length<6){setAuthMsg("ใส่อีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร", "err");return;}
-  setAuthMsg("กำลังเชื่อมต่อ...");
-  let result;
-  if(authIsSignup){
-    result=await sb.auth.signUp({email,password,options:{data:{display_name:name}}});
-    if(result.error){setAuthMsg(result.error.message,"err");return;}
-    if(!result.data.session){setAuthMsg("สมัครสำเร็จ ตรวจอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ","ok");return;}
-  }else{
-    result=await sb.auth.signInWithPassword({email,password});
-    if(result.error){setAuthMsg(result.error.message,"err");return;}
+  setAuthMsg(authIsSignup ? "กำลังสมัครสมาชิก..." : "กำลังเข้าสู่ระบบ...");
+  try{
+    let result;
+    if(authIsSignup){
+      result=await withTimeout(sb.auth.signUp({email,password,options:{data:{display_name:name}}}),12000,"การสมัครสมาชิก");
+      if(result.error){setAuthMsg(result.error.message,"err");return;}
+      if(!result.data.session){setAuthMsg("สมัครสำเร็จแล้ว ตรวจอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ","ok");return;}
+    }else{
+      result=await withTimeout(sb.auth.signInWithPassword({email,password}),12000,"การเข้าสู่ระบบ");
+      if(result.error){setAuthMsg(result.error.message,"err");return;}
+    }
+    await bootOnline(result.data.user);
+  }catch(e){
+    console.error(e);
+    setAuthMsg("เชื่อมต่อ Supabase ไม่สำเร็จ: "+(e?.message||e),"err");
   }
-  await bootOnline(result.data.user);
 }
 async function bootOnline(user){
   onlineUser=user;
-  document.getElementById("authScreen").classList.add("hidden");
-  const {data: profile}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
-  if(!profile){
-    await sb.from("profiles").insert({id:user.id,display_name:user.user_metadata?.display_name||"ผู้เล่น",avatar:"🧑🏻"});
+  try{
+    setAuthMsg("กำลังโหลดข้อมูลบัญชี...");
+    const {data: profile,error: profileError}=await withTimeout(sb.from("profiles").select("*").eq("id",user.id).maybeSingle(),12000,"โหลดโปรไฟล์");
+    if(profileError) throw profileError;
+    if(!profile){
+      const {error}=await withTimeout(sb.from("profiles").insert({id:user.id,display_name:user.user_metadata?.display_name||"ผู้เล่น",avatar:"🧑🏻"}),12000,"สร้างโปรไฟล์");
+      if(error) throw error;
+    }
+    await loadCloudGame();
+    document.getElementById("authScreen").classList.add("hidden");
+    if(!G){
+      document.getElementById("creator").classList.remove("hidden");
+      document.getElementById("game").classList.add("hidden");
+    }else{
+      document.getElementById("creator").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      render(); nextEvent();
+    }
+    addOnlineUserBar();
+  }catch(e){
+    console.error(e);
+    setAuthMsg("เข้าสู่ระบบได้ แต่โหลดข้อมูล Cloud ไม่สำเร็จ: "+(e?.message||e),"err");
   }
-  await loadCloudGame();
-  if(!G){
-    // Existing creator remains available; use cloud account instead of browser-only save.
-    document.getElementById("creator").classList.remove("hidden");
-    document.getElementById("game").classList.add("hidden");
-  }else{
-    document.getElementById("creator").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
-    render(); nextEvent();
-  }
-  addOnlineUserBar();
 }
 async function loadCloudGame(){
-  const {data,error}=await sb.from("games").select("state").eq("user_id",onlineUser.id).maybeSingle();
-  if(error){console.warn(error);return;}
-  if(data?.state){G=data.state;}
+  const {data,error}=await withTimeout(sb.from("games").select("state").eq("user_id",onlineUser.id).maybeSingle(),12000,"โหลดเซฟ");
+  if(error) throw error;
+  if(data?.state) G=data.state;
 }
 async function cloudSave(){
   if(!sb || !onlineUser || !G)return;
-  const {error}=await sb.from("games").upsert({user_id:onlineUser.id,state:G,updated_at:new Date().toISOString()},{onConflict:"user_id"});
-  if(error) console.warn("Cloud save:",error);
-  await updateLeaderboard();
+  try{
+    const {error}=await withTimeout(sb.from("games").upsert({user_id:onlineUser.id,state:G,updated_at:new Date().toISOString()},{onConflict:"user_id"}),12000,"บันทึกเกม");
+    if(error) throw error;
+    await updateLeaderboard();
+  }catch(e){ console.warn("Cloud save:",e); }
 }
 async function updateLeaderboard(){
   if(!sb||!onlineUser||!G)return;
   const display=G.name||onlineUser.user_metadata?.display_name||"ผู้เล่น";
-  await sb.from("leaderboard").upsert({
-    user_id:onlineUser.id,name:display,avatar:G.avatar||"🧑🏻",
-    age:G.age,money:Math.round(G.money||0),happiness:Math.round(G.happy||0),
-    knowledge:Math.round(G.knowledge||0),updated_at:new Date().toISOString()
-  },{onConflict:"user_id"});
+  const {error}=await withTimeout(sb.from("leaderboard").upsert({user_id:onlineUser.id,name:display,avatar:G.avatar||"🧑🏻",age:G.age,money:Math.round(G.money||0),happiness:Math.round(G.happy||0),knowledge:Math.round(G.knowledge||0),updated_at:new Date().toISOString()},{onConflict:"user_id"}),12000,"อัปเดต Leaderboard");
+  if(error) throw error;
 }
 async function showLeaderboard(){
   if(!sb){alert("ยังไม่ได้เชื่อมต่อฐานข้อมูล");return;}
-  const {data,error}=await sb.from("leaderboard").select("*").order("money",{ascending:false}).limit(20);
-  if(error){alert("โหลด Leaderboard ไม่สำเร็จ: "+error.message);return;}
-  document.getElementById("modalContent").innerHTML=`<h2>🏆 Leaderboard</h2>
-  <p class="muted">20 อันดับผู้เล่นที่มีเงินมากที่สุด</p>
-  <div class="list">${(data||[]).map((x,i)=>`<div class="list-item"><b>#${i+1} ${esc(x.avatar||"🧑🏻")} ${esc(x.name||"ผู้เล่น")}</b><br><span class="muted">อายุ ${x.age} • 💰 ${money(x.money)} • 😊 ${x.happiness} • 🧠 ${x.knowledge}</span></div>`).join("")||"<div class='list-item'>ยังไม่มีผู้เล่น</div>"}</div>`;
-  document.getElementById("modal").classList.remove("hidden");
+  try{
+    const {data,error}=await withTimeout(sb.from("leaderboard").select("*").order("money",{ascending:false}).limit(20),12000,"โหลด Leaderboard");
+    if(error) throw error;
+    document.getElementById("modalContent").innerHTML=`<h2>🏆 Leaderboard</h2><p class="muted">20 อันดับผู้เล่นที่มีเงินมากที่สุด</p><div class="list">${(data||[]).map((x,i)=>`<div class="list-item"><b>#${i+1} ${esc(x.avatar||"🧑🏻")} ${esc(x.name||"ผู้เล่น")}</b><br><span class="muted">อายุ ${x.age} • 💰 ${money(x.money)} • 😊 ${x.happiness} • 🧠 ${x.knowledge}</span></div>`).join("")||"<div class='list-item'>ยังไม่มีผู้เล่น</div>"}</div>`;
+    document.getElementById("modal").classList.remove("hidden");
+  }catch(e){alert("โหลด Leaderboard ไม่สำเร็จ: "+(e?.message||e));}
 }
 async function signOutOnline(){
   if(sb) await sb.auth.signOut();
   onlineUser=null;G=null;location.reload();
 }
+
 function addOnlineUserBar(){
   const top=document.querySelector(".top-actions");
   if(!top||document.getElementById("onlineTools"))return;
