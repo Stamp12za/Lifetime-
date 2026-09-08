@@ -260,25 +260,29 @@ function showActivity(){
  }
 }
 function doActivity(i){
- try{
   const a=ACTIVITIES[i];
-  if(!a||!G){alert("ยังไม่มีข้อมูลชีวิต กรุณาเริ่มชีวิตใหม่");return;}
-  apply(a[3]);
-  if(!Array.isArray(G.history)) G.history=[];
-  G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
-  render();
-  localSave();
   const area=document.getElementById("eventArea");
-  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>รอสักครู่</p></div>';
-  // แสดงเหตุการณ์ก่อน แล้วค่อยบันทึก Cloud เพื่อไม่ให้การเชื่อมต่อช้าทำให้เกมเหมือนค้าง
-  setTimeout(()=>{
-   try{ nextEvent(); }catch(err){ console.error(err); showEventError(err); }
-  },60);
-  if(typeof cloudSave==="function") cloudSave();
- }catch(err){
-  console.error("doActivity",err);
-  showEventError(err);
- }
+  try{
+    if(!a||!G) throw new Error("ยังไม่มีข้อมูลชีวิต");
+    // เปลี่ยนหน้าทันที ไม่รอ Supabase
+    if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>กำลังเตรียมเหตุการณ์ประจำเดือน</p></div>';
+    apply(a[3]);
+    if(!Array.isArray(G.history)) G.history=[];
+    G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
+    localSave();
+    // รอ 1 tick ให้ Safari วาดหน้าจอก่อน แล้วจึงสุ่ม
+    setTimeout(function(){
+      try{ nextEvent(); }
+      catch(err){ console.error(err); showEventError(err); }
+    },80);
+    // Cloud save ทำทีหลังและห้ามขวาง gameplay
+    setTimeout(function(){
+      try{ if(typeof cloudSave==="function") cloudSave(); }catch(err){ console.warn("cloudSave",err); }
+    },500);
+  }catch(err){
+    console.error("doActivity",err);
+    if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>กดกิจกรรมแล้ว</h2><p>'+esc(err.message||"เกิดข้อผิดพลาด")+'</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์ต่อ</button></div>';
+  }
 }
 function showEventError(err){
  const area=document.getElementById("eventArea");
@@ -563,5 +567,14 @@ window.addEventListener("load",async()=>{
 });
 </script>
 
+
+<script>
+window.addEventListener("error",function(e){
+  const area=document.getElementById("eventArea");
+  if(area && G && !currentEvent){
+    area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>เกมเจอข้อผิดพลาด</h2><p>แต่ยังเล่นต่อได้</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+  }
+});
+</script>
 </body>
 </html>
