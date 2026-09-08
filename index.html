@@ -100,7 +100,7 @@ main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#1119
       <div class="grid">
         <section class="panel event-panel">
           <div class="event-title"><span id="monthPhase">📅 เดือนนี้</span><span id="chainTag"></span></div>
-          <div id="eventArea"></div>
+          <div id="eventArea"><div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกได้ <b>1 อย่าง</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p><div class="choices"><button type="button" class="choice activity-choice" onclick="doActivity(0)"><b>💼 ทำงาน/ทำงานพิเศษ</b><small>หาเงินเพิ่ม แต่แลกด้วยความเหนื่อย</small></button><button type="button" class="choice activity-choice" onclick="doActivity(1)"><b>📚 เรียนและพัฒนาตัวเอง</b><small>เพิ่มความรู้เพื่อเปิดโอกาสใหม่</small></button><button type="button" class="choice activity-choice" onclick="doActivity(2)"><b>🏋️ ออกกำลังกาย</b><small>ดูแลร่างกาย</small></button><button type="button" class="choice activity-choice" onclick="doActivity(3)"><b>❤️ ใช้เวลากับคนสำคัญ</b><small>เติมความสุขและความสัมพันธ์</small></button><button type="button" class="choice activity-choice" onclick="doActivity(4)"><b>💰 ลงทุน</b><small>เสี่ยงเพื่ออนาคต</small></button><button type="button" class="choice activity-choice" onclick="doActivity(5)"><b>😴 พักผ่อนเต็มที่</b><small>ชาร์จพลังและฟื้นสุขภาพ</small></button><button type="button" class="choice activity-choice" onclick="doActivity(6)"><b>🎨 ทำงานอดิเรก</b><small>เพิ่มความสุขและความคิดสร้างสรรค์</small></button></div></div></div>
         </section>
 
         <aside>
@@ -140,8 +140,9 @@ let G=null, selectedTrait="smart", currentEvent=null;
 const base=()=>({year:1,month:1,age:18,money:12500,health:87,happy:72,knowledge:54,salary:0,job:"นักศึกษา",debt:0,partner:false,married:false,children:0,house:false,car:false,business:false,invest:0,property:0,degree:false,pandemic:false,recession:false,unemployed:false,months:0,events:0,good:0,bad:0,name:"นนท์",avatar:"🧑🏻",trait:"smart",friends:45,family:75,partnerRel:0,history:[],achievements:[]});
 
 function pickTrait(el){document.querySelectorAll(".trait").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selectedTrait=el.dataset.trait}
-function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];saveGame();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120)}
-function saveGame(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
+function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];localSave();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120)}
+function localSave(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
+function saveGame(){localSave();}
 function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120);return true}}catch(e){}return false}
 function newGame(){if(confirm("เริ่มชีวิตใหม่? เซฟเดิมจะถูกแทนที่")){localStorage.removeItem(KEY);location.reload()}}
 function money(n){return Math.round(n).toLocaleString("th-TH")+" ฿"}
@@ -232,6 +233,7 @@ const ACTIVITIES=[
  ["🎨","ทำงานอดิเรก","ใช้เวลากับสิ่งที่ชอบ เพิ่มความสุขและความคิดสร้างสรรค์",{happy:6,knowledge:2,money:-500}]
 ];
 function showActivity(){
+ try{
  currentEvent=null;
  const area=document.getElementById("eventArea");
  if(!area) return;
@@ -239,11 +241,12 @@ function showActivity(){
  document.getElementById("rarityBadge").textContent="ACTION";
  document.getElementById("chainTag").textContent="1 เดือน = 1 กิจกรรม";
  area.innerHTML=`<div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกได้ <b>1 อย่าง</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p><div class="choices">${ACTIVITIES.map((a,i)=>`<button type="button" class="choice activity-choice" onclick="doActivity(${i})"><b>${a[0]} ${a[1]}</b><small>${a[2]}</small></button>`).join("")}</div></div>`;
+ }catch(err){ console.error("showActivity",err); }
 }
 
 function doActivity(i){
  const a=ACTIVITIES[i]; apply(a[3]); G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
- render(); saveGame();
+ render(); localSave(); if(typeof cloudSave==="function") cloudSave();
  document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
  nextEvent();
 }
@@ -268,7 +271,7 @@ function choose(i){
  const e=currentEvent,c=e.choices[i], before=G.money;
  apply(c[1]);G.events++;currentEvent=null;render();
  document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">✨</div><h2>ผลลัพธ์</h2><p>${c[1].message||"เดือนนี้จบลงแล้ว"}</p><div class="effects">${c[1].money?statEffect("💰 เงิน",c[1].money):""}${c[1].health?statEffect("❤️ สุขภาพ",c[1].health):""}${c[1].happy?statEffect("😊 ความสุข",c[1].happy):""}${c[1].knowledge?statEffect("🧠 ความรู้",c[1].knowledge):""}${c[1].salary?statEffect("💼 เงินเดือน",c[1].salary):""}</div><button class="primary" onclick="advance()">▶️ ไปเดือนถัดไป</button></div>`;
- saveGame();
+ localSave();
 }
 function advance(){
  if(G.salary>0&&!G.unemployed){G.money+=G.salary;G.money-=9000;if(G.house)G.money-=3500;if(G.car)G.money-=2200;if(G.business)G.money+=Math.round(G.salary*.18)}
@@ -279,7 +282,7 @@ function advance(){
  if(G.month>12){G.month=1;G.year++;G.age++;yearly()}
  if(G.money<0)G.happy-=3;
  if(G.health<=0||G.age>=80){endGame();return}
- saveGame();showActivity();
+ localSave();showActivity();
 }
 function yearly(){
  if(G.age===22&&!G.degree){G.degree=true;G.knowledge+=10;G.history.unshift("22 ปี — เรียนจบมหาวิทยาลัยและเริ่มต้นชีวิตการทำงาน")}
@@ -299,7 +302,7 @@ function showTab(tab,btn){
  document.getElementById("tabArea").innerHTML=html;
 }
 function endGame(){
- saveGame();document.getElementById("modalContent").innerHTML=`<div style="text-align:center"><div style="font-size:58px">🏆</div><h2>จบชีวิตของ ${esc(G.name)}</h2><p class="muted">อายุ ${G.age} ปี • ใช้ชีวิตมา ${G.months} เดือน</p><div class="list"><div class="list-item">💰 เงินสุดท้าย: <b>${money(G.money)}</b></div><div class="list-item">❤️ สุขภาพ: <b>${G.health}</b></div><div class="list-item">😊 ความสุข: <b>${G.happy}</b></div><div class="list-item">🧠 ความรู้: <b>${G.knowledge}</b></div><div class="list-item">🏆 Achievement: <b>${G.achievements.length}</b></div></div><button class="primary big" onclick="newGame()">เริ่มชีวิตใหม่</button></div>`;document.getElementById("modal").classList.remove("hidden")}
+ localSave();document.getElementById("modalContent").innerHTML=`<div style="text-align:center"><div style="font-size:58px">🏆</div><h2>จบชีวิตของ ${esc(G.name)}</h2><p class="muted">อายุ ${G.age} ปี • ใช้ชีวิตมา ${G.months} เดือน</p><div class="list"><div class="list-item">💰 เงินสุดท้าย: <b>${money(G.money)}</b></div><div class="list-item">❤️ สุขภาพ: <b>${G.health}</b></div><div class="list-item">😊 ความสุข: <b>${G.happy}</b></div><div class="list-item">🧠 ความรู้: <b>${G.knowledge}</b></div><div class="list-item">🏆 Achievement: <b>${G.achievements.length}</b></div></div><button class="primary big" onclick="newGame()">เริ่มชีวิตใหม่</button></div>`;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 window.addEventListener("load",()=>{if(localStorage.getItem(KEY)){document.getElementById("continueBox").classList.remove("hidden");document.getElementById("continueBox").innerHTML=`มีเซฟของ <b>ชีวิตเดิม</b> อยู่ในเครื่อง <button class="primary" onclick="loadGame()">▶️ เล่นต่อ</button>`}});
 render();
