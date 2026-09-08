@@ -249,7 +249,7 @@ function showActivity(){
     const b=document.createElement("button"); b.type="button"; b.className="choice activity-choice";
     const strong=document.createElement("b"); strong.textContent=a[0]+" "+a[1];
     const small=document.createElement("small"); small.textContent=a[2];
-    b.append(strong,small); b.addEventListener("click",()=>doActivity(i)); choices.appendChild(b);
+    b.append(strong,small); b.setAttribute("onclick",`doActivity(${i})`); choices.appendChild(b);
   });
   const random=document.createElement("button"); random.type="button"; random.className="primary big"; random.style.marginTop="12px"; random.textContent="🎲 สุ่มเหตุการณ์เลย"; random.addEventListener("click",nextEvent);
   card.append(choices,random); area.appendChild(card);
@@ -260,11 +260,31 @@ function showActivity(){
  }
 }
 function doActivity(i){
- const a=ACTIVITIES[i]; if(!a||!G)return;
- apply(a[3]); G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
- render(); localSave(); if(typeof cloudSave==="function") cloudSave();
- nextEvent();
+ try{
+  const a=ACTIVITIES[i];
+  if(!a||!G){alert("ยังไม่มีข้อมูลชีวิต กรุณาเริ่มชีวิตใหม่");return;}
+  apply(a[3]);
+  if(!Array.isArray(G.history)) G.history=[];
+  G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
+  render();
+  localSave();
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>รอสักครู่</p></div>';
+  // แสดงเหตุการณ์ก่อน แล้วค่อยบันทึก Cloud เพื่อไม่ให้การเชื่อมต่อช้าทำให้เกมเหมือนค้าง
+  setTimeout(()=>{
+   try{ nextEvent(); }catch(err){ console.error(err); showEventError(err); }
+  },60);
+  if(typeof cloudSave==="function") cloudSave();
+ }catch(err){
+  console.error("doActivity",err);
+  showEventError(err);
+ }
 }
+function showEventError(err){
+ const area=document.getElementById("eventArea");
+ if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>เกิดข้อผิดพลาด</h2><p>ระบบกิจกรรมทำงานไม่ครบ แต่เกมยังเล่นต่อได้</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์ใหม่</button></div>';
+}
+
 function nextEvent(){
  try{
   if(!G)return;
@@ -285,7 +305,8 @@ function nextEvent(){
  }
 }
 function drawEvent(){
- const e=currentEvent; if(!e)return;
+ const e=currentEvent;
+ if(!e){showEventError(new Error("ไม่มีเหตุการณ์"));return;}
  const badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag"),area=document.getElementById("eventArea");
  if(badge)badge.textContent=e.r; if(tag)tag.textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":""; if(!area)return;
  area.replaceChildren();
