@@ -249,7 +249,7 @@ function showActivity(){
     const b=document.createElement("button"); b.type="button"; b.className="choice activity-choice";
     const strong=document.createElement("b"); strong.textContent=a[0]+" "+a[1];
     const small=document.createElement("small"); small.textContent=a[2];
-    b.append(strong,small); b.setAttribute("onclick",`doActivity(${i})`); choices.appendChild(b);
+    b.append(strong,small); b.addEventListener("click",function(ev){ev.preventDefault();ev.stopPropagation();window.doActivity(i);}); choices.appendChild(b);
   });
   const random=document.createElement("button"); random.type="button"; random.className="primary big"; random.style.marginTop="12px"; random.textContent="🎲 สุ่มเหตุการณ์เลย"; random.addEventListener("click",nextEvent);
   card.append(choices,random); area.appendChild(card);
@@ -260,30 +260,25 @@ function showActivity(){
  }
 }
 function doActivity(i){
-  const a=ACTIVITIES[i];
-  const area=document.getElementById("eventArea");
   try{
-    if(!a||!G) throw new Error("ยังไม่มีข้อมูลชีวิต");
-    // เปลี่ยนหน้าทันที ไม่รอ Supabase
-    if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>กำลังเตรียมเหตุการณ์ประจำเดือน</p></div>';
+    if(!G) throw new Error("ยังไม่มีข้อมูลชีวิต");
+    const a=ACTIVITIES[Number(i)];
+    if(!a) throw new Error("ไม่พบกิจกรรมนี้");
+    const area=document.getElementById("eventArea");
+    if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>เตรียมเหตุการณ์ประจำเดือน</p></div>';
+    // Gameplay ต้องไม่รอ network และไม่เรียก render ระหว่างเปลี่ยนฉาก
     apply(a[3]);
     if(!Array.isArray(G.history)) G.history=[];
     G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
     localSave();
-    // รอ 1 tick ให้ Safari วาดหน้าจอก่อน แล้วจึงสุ่ม
-    setTimeout(function(){
-      try{ nextEvent(); }
-      catch(err){ console.error(err); showEventError(err); }
-    },80);
-    // Cloud save ทำทีหลังและห้ามขวาง gameplay
-    setTimeout(function(){
-      try{ if(typeof cloudSave==="function") cloudSave(); }catch(err){ console.warn("cloudSave",err); }
-    },500);
+    // สุ่มทันทีใน call stack เดียวกัน เพื่อไม่ให้ Safari ค้างกับ timer/Promise
+    nextEvent();
   }catch(err){
     console.error("doActivity",err);
-    if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>กดกิจกรรมแล้ว</h2><p>'+esc(err.message||"เกิดข้อผิดพลาด")+'</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์ต่อ</button></div>';
+    showEventError(err);
   }
 }
+
 function showEventError(err){
  const area=document.getElementById("eventArea");
  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>เกิดข้อผิดพลาด</h2><p>ระบบกิจกรรมทำงานไม่ครบ แต่เกมยังเล่นต่อได้</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์ใหม่</button></div>';
@@ -359,6 +354,7 @@ function showTab(tab,btn){
 function endGame(){
  localSave();document.getElementById("modalContent").innerHTML=`<div style="text-align:center"><div style="font-size:58px">🏆</div><h2>จบชีวิตของ ${esc(G.name)}</h2><p class="muted">อายุ ${G.age} ปี • ใช้ชีวิตมา ${G.months} เดือน</p><div class="list"><div class="list-item">💰 เงินสุดท้าย: <b>${money(G.money)}</b></div><div class="list-item">❤️ สุขภาพ: <b>${G.health}</b></div><div class="list-item">😊 ความสุข: <b>${G.happy}</b></div><div class="list-item">🧠 ความรู้: <b>${G.knowledge}</b></div><div class="list-item">🏆 Achievement: <b>${G.achievements.length}</b></div></div><button class="primary big" onclick="newGame()">เริ่มชีวิตใหม่</button></div>`;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
+window.doActivity=doActivity; window.nextEvent=nextEvent; window.choose=choose; window.advance=advance;
 window.addEventListener("load",()=>{if(localStorage.getItem(KEY)){document.getElementById("continueBox").classList.remove("hidden");document.getElementById("continueBox").innerHTML=`มีเซฟของ <b>ชีวิตเดิม</b> อยู่ในเครื่อง <button class="primary" onclick="loadGame()">▶️ เล่นต่อ</button>`}});
 render();
 
@@ -512,22 +508,13 @@ function addOnlineUserBar(){
 }
 /* Override local save/load with cloud save for online mode. */
 const oldSaveGame=window.saveGame;
-window.saveGame=async function(){ oldSaveGame(); await cloudSave(); };
+window.saveGame=function(){ oldSaveGame(); cloudSave().catch(()=>{}); };
 const oldStartGame=window.startGame;
-window.startGame=async function(){
-  oldStartGame();
-  await cloudSave();
-};
+window.startGame=function(){ oldStartGame(); setTimeout(()=>cloudSave().catch(()=>{}),300); };
 const oldChoose=window.choose;
-window.choose=async function(i){
-  oldChoose(i);
-  await cloudSave();
-};
+window.choose=function(i){ oldChoose(i); setTimeout(()=>cloudSave().catch(()=>{}),300); };
 const oldAdvance=window.advance;
-window.advance=async function(){
-  oldAdvance();
-  await cloudSave();
-};
+window.advance=function(){ oldAdvance(); setTimeout(()=>cloudSave().catch(()=>{}),300); };
 const oldNewGame=window.newGame;
 window.newGame=function(){
   if(confirm("เริ่มชีวิตใหม่และแทนที่เซฟบนคลาวด์?")){
