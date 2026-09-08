@@ -429,14 +429,32 @@ window.newGame=function(){
   }
 };
 window.addEventListener("load",async()=>{
-  if(!configured()){
-    document.getElementById("configMsg").classList.remove("hidden");
-    document.getElementById("configMsg").textContent="⚙️ ยังไม่ตั้งค่า Supabase: ใส่ SUPABASE_URL และ SUPABASE_PUBLISHABLE_KEY ใน index.html ก่อนอัปโหลด";
-    return;
+  const status=document.getElementById("authMsg");
+  try{
+    if(!configured()){
+      document.getElementById("configMsg").classList.remove("hidden");
+      document.getElementById("configMsg").textContent="⚙️ ยังไม่ตั้งค่า Supabase: ใส่ SUPABASE_URL และ SUPABASE_PUBLISHABLE_KEY ใน index.html ก่อนอัปโหลด";
+      setAuthMsg("ยังไม่ได้ตั้งค่า Supabase", "err");
+      return;
+    }
+    if(!window.supabase || !window.supabase.createClient){
+      setAuthMsg("โหลดไลบรารี Supabase ไม่สำเร็จ กรุณารีเฟรชหน้าเว็บอีกครั้ง", "err");
+      return;
+    }
+    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    setAuthMsg("กำลังตรวจสอบบัญชี...");
+    const sessionResult=await withTimeout(sb.auth.getSession(),10000,"ตรวจสอบบัญชี");
+    if(sessionResult.error) throw sessionResult.error;
+    const session=sessionResult.data?.session;
+    if(session){
+      await bootOnline(session.user);
+    }else{
+      setAuthMsg("พร้อมใช้งาน — เข้าสู่ระบบหรือสมัครสมาชิกได้เลย", "ok");
+    }
+  }catch(e){
+    console.error(e);
+    setAuthMsg("เชื่อมต่อ Supabase ไม่สำเร็จ: "+(e?.message||e),"err");
   }
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  const {data:{session}}=await sb.auth.getSession();
-  if(session) await bootOnline(session.user);
 });
 </script>
 
