@@ -280,8 +280,8 @@ render();
 
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+
 /* ===== MY LIFE ONLINE / SUPABASE =====
    Put your project's URL and PUBLISHABLE/ANON key here.
    Never put a service_role key in this file.
@@ -291,6 +291,30 @@ const SUPABASE_KEY = "sb_publishable_Hp-Dj-J7ea6SvimMJyOsjw_RDIfpi5g";
 let sb = null;
 let onlineUser = null;
 let authIsSignup = false;
+let sdkLoading = null;
+
+function loadSupabaseSDK(){
+  if(window.supabase?.createClient) return Promise.resolve();
+  if(sdkLoading) return sdkLoading;
+  sdkLoading=new Promise((resolve,reject)=>{
+    const urls=[
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js",
+      "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    ];
+    let i=0;
+    const next=()=>{
+      if(window.supabase?.createClient){resolve();return;}
+      if(i>=urls.length){reject(new Error("โหลด Supabase SDK ไม่สำเร็จ — อาจถูกบล็อกโดยเครือข่ายหรือเบราว์เซอร์"));return;}
+      const sc=document.createElement("script"); sc.src=urls[i++]; sc.async=true;
+      const timer=setTimeout(()=>{sc.remove();next();},7000);
+      sc.onload=()=>{clearTimeout(timer); if(window.supabase?.createClient) resolve(); else next();};
+      sc.onerror=()=>{clearTimeout(timer); sc.remove(); next();};
+      document.head.appendChild(sc);
+    };
+    next();
+  });
+  return sdkLoading;
+}
 
 function authMode(mode){
   authIsSignup = mode === "signup";
@@ -314,6 +338,7 @@ function withTimeout(promise, ms=12000, label="Supabase"){
 }
 async function submitAuth(){
   if(!configured()){setAuthMsg("ยังไม่ได้ใส่ Supabase URL กับ Publishable/Anon Key ในเกม", "err"); return;}
+  try{ if(!sb){ setAuthMsg("กำลังโหลดระบบออนไลน์..."); await loadSupabaseSDK(); sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); } }catch(e){ setAuthMsg("โหลดระบบออนไลน์ไม่สำเร็จ: "+e.message,"err"); return; }
   const email=document.getElementById("authEmail").value.trim();
   const password=document.getElementById("authPassword").value;
   const name=document.getElementById("authName").value.trim() || "ผู้เล่น";
@@ -430,6 +455,8 @@ window.newGame=function(){
 };
 window.addEventListener("load",async()=>{
   const status=document.getElementById("authMsg");
+  setAuthMsg("กำลังโหลดระบบออนไลน์...");
+  setTimeout(()=>{ if(!sb && !status.classList.contains("err") && status.textContent.includes("กำลัง")) setAuthMsg("ระบบออนไลน์กำลังโหลดช้า — ลองกดเข้าสู่ระบบได้เลย หรือรีเฟรชหน้าเว็บ", "err"); },9000);
   try{
     if(!configured()){
       document.getElementById("configMsg").classList.remove("hidden");
@@ -437,12 +464,10 @@ window.addEventListener("load",async()=>{
       setAuthMsg("ยังไม่ได้ตั้งค่า Supabase", "err");
       return;
     }
-    if(!window.supabase || !window.supabase.createClient){
-      setAuthMsg("โหลดไลบรารี Supabase ไม่สำเร็จ กรุณารีเฟรชหน้าเว็บอีกครั้ง", "err");
-      return;
-    }
+    setAuthMsg("กำลังโหลดระบบออนไลน์...");
+    await loadSupabaseSDK();
     sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-    setAuthMsg("กำลังตรวจสอบบัญชี...");
+    setAuthMsg("พร้อมใช้งาน — เข้าสู่ระบบหรือสมัครสมาชิกได้เลย", "ok");
     const sessionResult=await withTimeout(sb.auth.getSession(),10000,"ตรวจสอบบัญชี");
     if(sessionResult.error) throw sessionResult.error;
     const session=sessionResult.data?.session;
