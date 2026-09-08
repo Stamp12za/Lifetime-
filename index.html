@@ -172,7 +172,7 @@ function render(){
   [G.children>=2,"👶 มีลูก 2 คน"],[G.money>=1000000,"💰 มีเงิน 1 ล้านบาท"],[G.health>=90,"💪 สุขภาพ 90+"]
  ];
  document.getElementById("goals").innerHTML=goals.map(g=>`<div class="row"><span>${g[0]?"✅":"⬜"} ${g[1]}</span></div>`).join("");
- document.getElementById("rarityBadge").textContent=currentEvent?.rarity||"MONTHLY";
+ document.getElementById("rarityBadge").textContent=currentEvent?.r||"MONTHLY";
 }
 
 function statEffect(label,val){let sign=val>=0?"+":"";return `<span class="effect ${val>=0?"good":"bad"}">${label} ${sign}${val}</span>`}
@@ -234,13 +234,13 @@ const ACTIVITIES=[
 ];
 function showActivity(){
  try{
- currentEvent=null;
- const area=document.getElementById("eventArea");
- if(!area) return;
- document.getElementById("monthPhase").textContent="🎯 เลือกกิจกรรมประจำเดือน";
- document.getElementById("rarityBadge").textContent="ACTION";
- document.getElementById("chainTag").textContent="1 เดือน = 1 กิจกรรม";
- area.innerHTML=`<div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกได้ <b>1 อย่าง</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p><div class="choices">${ACTIVITIES.map((a,i)=>`<button type="button" class="choice activity-choice" onclick="doActivity(${i})"><b>${a[0]} ${a[1]}</b><small>${a[2]}</small></button>`).join("")}</div></div>`;
+  currentEvent=null;
+  const area=document.getElementById("eventArea");
+  if(!area) return;
+  document.getElementById("monthPhase").textContent="🎯 เลือกกิจกรรมประจำเดือน";
+  document.getElementById("rarityBadge").textContent="ACTION";
+  document.getElementById("chainTag").textContent="1 เดือน = 1 กิจกรรม";
+  area.innerHTML=`<div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกกิจกรรม 1 อย่าง แล้ว <b>เหตุการณ์จะสุ่มทันที</b></p><div class="choices">${ACTIVITIES.map((a,i)=>`<button type="button" class="choice activity-choice" onclick="doActivity(${i})"><b>${a[0]} ${a[1]}</b><small>${a[2]}</small></button>`).join("")}</div><button type="button" class="primary big" style="margin-top:12px" onclick="nextEvent()">🎲 สุ่มเหตุการณ์เลย</button></div>`;
  }catch(err){ console.error("showActivity",err); }
 }
 
@@ -251,16 +251,25 @@ function doActivity(i){
  nextEvent();
 }
 function nextEvent(){
- render();
- document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
- let e=chainEvent();
+ try{
+  if(!G) return;
+  render();
+  document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
+  let e=chainEvent();
  if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[
   ["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],
   ["ลงทุนสวนกระแส",{recession:true,invest:25000,money:-20000,knowledge:8,message:"เสี่ยงลงทุนในช่วงวิกฤต"}]]};
  if(!e&&Math.random()<.012&&!G.pandemic)e={r:"CHAIN",icon:"🦠",title:"โรคระบาดใหญ่",desc:"เมืองประกาศมาตรการควบคุมโรค หลายธุรกิจหยุดชะงัก",choices:[
   ["กักตัวและดูแลตัวเอง",{pandemic:true,health:4,money:-3000,happy:-5,message:"ผ่านช่วงโรคระบาดอย่างปลอดภัย"}],
   ["ทำงานต่อ",{pandemic:true,health:-15,money:5000,happy:-8,message:"ยังทำงานต่อท่ามกลางโรคระบาด"}]]};
- if(!e)e=weightedPick(); currentEvent=e; render(); drawEvent();
+  if(!e)e=weightedPick();
+  if(!e)e={r:"COMMON",icon:"☀️",title:"วันธรรมดา",desc:"เดือนนี้ไม่มีเหตุการณ์พิเศษ แต่ชีวิตยังเดินต่อไป",choices:[["เดินหน้าต่อ",{happy:2,knowledge:1,message:"ใช้ชีวิตต่ออย่างมั่นคง"}]]};
+  currentEvent=e; render(); drawEvent();
+ }catch(err){
+  console.error("nextEvent",err);
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>เกิดเหตุการณ์แล้ว</h2><p>กดปุ่มด้านล่างเพื่อสุ่มเหตุการณ์ใหม่</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+ }
 }
 function drawEvent(){
  const e=currentEvent;document.getElementById("rarityBadge").textContent=e.r;
