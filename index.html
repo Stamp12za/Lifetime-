@@ -13,7 +13,7 @@ main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#1119
 .form-grid{display:grid;grid-template-columns:1fr 180px;gap:12px;max-width:600px;margin:auto}.form-grid label{display:grid;gap:7px;color:#aebbd2;font-size:13px}input,select{width:100%;background:#0b1220;border:1px solid #33405d;color:#fff;padding:12px;border-radius:12px;outline:none}.trait-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:850px;margin:16px auto}.trait{padding:14px;background:#0d1526;border:1px solid #2a3651;border-radius:15px;text-align:left}.trait small{display:block;color:#8797b4;margin-top:5px}.trait.selected{border-color:#6f8cff;box-shadow:0 0 0 2px #6f8cff33 inset}.primary{border:0;border-radius:13px;padding:12px 18px;background:linear-gradient(135deg,#637cff,#9c61ff);font-weight:800}.big{display:block;width:min(850px,100%);margin:18px auto 0;font-size:17px;padding:15px}.continue{max-width:850px;margin:12px auto 0;padding:12px;border-radius:12px;background:#0c1525;text-align:center}
 .life-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.profile{display:flex;align-items:center;gap:12px}.avatar{font-size:42px;background:#121d32;border:1px solid #2c3955;width:62px;height:62px;border-radius:18px;display:grid;place-items:center}.badge{font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px;background:#25304a;color:#b7c5ff}
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:12px}.stat{background:#10182a;border:1px solid #26334e;border-radius:15px;padding:12px}.stat-top{display:flex;justify-content:space-between;gap:5px;color:#9aa9c3;font-size:12px}.stat b{display:block;font-size:21px;margin-top:5px}.bar{height:5px;background:#202a40;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:#6f8cff;border-radius:9px}
-.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:12px}.event-panel{min-height:370px}.event-title{display:flex;justify-content:space-between;color:#91a0bc;font-size:13px}.event-card{margin-top:18px;padding:22px;border-radius:18px;background:linear-gradient(145deg,#151f34,#0d1423);border:1px solid #2e3b58}.event-icon{font-size:52px}.event-card h2{font-size:27px;margin:10px 0 8px}.event-card p{color:#aebbd0;line-height:1.65}.effects{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.effect{padding:6px 9px;border-radius:999px;background:#1b263d;font-size:12px}.choices{display:grid;gap:8px}.choice{padding:13px 14px;border:1px solid #34415d;background:#121b2e;border-radius:12px;text-align:left}.choice:hover{background:#1a2740;border-color:#7187ff}.choice small{display:block;color:#8494b1;margin-top:3px}.activity-card{min-height:320px}.activity-choice{cursor:pointer;min-height:62px;font-size:15px}.activity-choice b{font-size:16px}
+.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:12px}.event-panel{min-height:370px}.event-title{display:flex;justify-content:space-between;color:#91a0bc;font-size:13px}.event-card{margin-top:18px;padding:22px;border-radius:18px;background:linear-gradient(145deg,#151f34,#0d1423);border:1px solid #2e3b58}.event-icon{font-size:52px}.event-card h2{font-size:27px;margin:10px 0 8px}.event-card p{color:#aebbd0;line-height:1.65}.effects{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.effect{padding:6px 9px;border-radius:999px;background:#1b263d;font-size:12px}.choices{display:grid;gap:8px}.choice{padding:13px 14px;border:1px solid #34415d;background:#121b2e;border-radius:12px;text-align:left}.choice:hover{background:#1a2740;border-color:#7187ff}.choice small{display:block;color:#8494b1;margin-top:3px}.activity-card{min-height:320px}.activity-choice{cursor:pointer;min-height:62px;font-size:15px}.activity-choice b{font-size:16px}.event-panel{overflow:visible}.event-panel #eventArea{display:block!important;visibility:visible!important;opacity:1!important;min-height:300px}.activity-choice{width:100%;display:block}
 .side{margin-bottom:12px}.side h3{margin:0 0 12px}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #202a40}.row:last-child{border-bottom:0}.value{font-weight:800;text-align:right}.good{color:#64dfa1}.bad{color:#ff7e91}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap}.tabs button.active{background:#637cff;border-color:#637cff}.list{display:grid;gap:8px}.list-item{padding:11px 12px;border-radius:12px;background:#0d1525;border:1px solid #222e48}.modal{position:fixed;inset:0;background:#0009;z-index:20;display:grid;place-items:center;padding:16px}.modal-card{position:relative;width:min(650px,100%);max-height:88vh;overflow:auto;background:#111a2c;border:1px solid #35415c;border-radius:20px;padding:22px}.close{position:absolute;right:14px;top:14px;font-size:22px}.continue b{color:#8ea1ff}
 @media(max-width:800px){main{padding:14px 10px 40px}.form-grid{grid-template-columns:1fr}.trait-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.life-head{align-items:flex-start}.event-card h2{font-size:23px}.top{padding:12px 10px}.brand{font-size:20px}}
 
@@ -143,7 +143,7 @@ function pickTrait(el){document.querySelectorAll(".trait").forEach(x=>x.classLis
 function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];localSave();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120)}
 function localSave(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
 function saveGame(){localSave();}
-function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120);return true}}catch(e){}return false}
+function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();showActivity();setTimeout(showActivity,120); setTimeout(showActivity,600);return true}}catch(e){}return false}
 function newGame(){if(confirm("เริ่มชีวิตใหม่? เซฟเดิมจะถูกแทนที่")){localStorage.removeItem(KEY);location.reload()}}
 function money(n){return Math.round(n).toLocaleString("th-TH")+" ฿"}
 function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
@@ -237,44 +237,65 @@ function showActivity(){
   currentEvent=null;
   const area=document.getElementById("eventArea");
   if(!area) return;
-  document.getElementById("monthPhase").textContent="🎯 เลือกกิจกรรมประจำเดือน";
-  document.getElementById("rarityBadge").textContent="ACTION";
-  document.getElementById("chainTag").textContent="1 เดือน = 1 กิจกรรม";
-  area.innerHTML=`<div class="event-card activity-card"><div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือกกิจกรรม 1 อย่าง แล้ว <b>เหตุการณ์จะสุ่มทันที</b></p><div class="choices">${ACTIVITIES.map((a,i)=>`<button type="button" class="choice activity-choice" onclick="doActivity(${i})"><b>${a[0]} ${a[1]}</b><small>${a[2]}</small></button>`).join("")}</div><button type="button" class="primary big" style="margin-top:12px" onclick="nextEvent()">🎲 สุ่มเหตุการณ์เลย</button></div>`;
- }catch(err){ console.error("showActivity",err); }
+  const phase=document.getElementById("monthPhase"), badge=document.getElementById("rarityBadge"), tag=document.getElementById("chainTag");
+  if(phase) phase.textContent="🎯 เลือกกิจกรรมประจำเดือน";
+  if(badge) badge.textContent="ACTION";
+  if(tag) tag.textContent="1 เดือน = 1 กิจกรรม";
+  area.replaceChildren();
+  const card=document.createElement("div"); card.className="event-card activity-card";
+  card.innerHTML='<div class="event-icon">🎯</div><h2>เดือนนี้มึงจะทำอะไร?</h2><p>เลือก <b>1 กิจกรรม</b> แล้วเกมจะสุ่มเหตุการณ์ต่อทันที</p>';
+  const choices=document.createElement("div"); choices.className="choices";
+  ACTIVITIES.forEach((a,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="choice activity-choice";
+    const strong=document.createElement("b"); strong.textContent=a[0]+" "+a[1];
+    const small=document.createElement("small"); small.textContent=a[2];
+    b.append(strong,small); b.addEventListener("click",()=>doActivity(i)); choices.appendChild(b);
+  });
+  const random=document.createElement("button"); random.type="button"; random.className="primary big"; random.style.marginTop="12px"; random.textContent="🎲 สุ่มเหตุการณ์เลย"; random.addEventListener("click",nextEvent);
+  card.append(choices,random); area.appendChild(card);
+ }catch(err){
+  console.error("showActivity",err);
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎯</div><h2>เลือกกิจกรรม</h2><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์เลย</button></div>';
+ }
 }
-
 function doActivity(i){
- const a=ACTIVITIES[i]; apply(a[3]); G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
+ const a=ACTIVITIES[i]; if(!a||!G)return;
+ apply(a[3]); G.history.unshift(`${G.age} ปี ${G.month} เดือน — กิจกรรม: ${a[1]}`);
  render(); localSave(); if(typeof cloudSave==="function") cloudSave();
- document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
  nextEvent();
 }
 function nextEvent(){
  try{
-  if(!G) return;
-  render();
-  document.getElementById("monthPhase").textContent="🎲 เหตุการณ์ประจำเดือน";
+  if(!G)return;
+  const phase=document.getElementById("monthPhase"),badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag");
+  if(phase)phase.textContent="🎲 เหตุการณ์ประจำเดือน";
+  if(badge)badge.textContent="ROLLING";
+  if(tag)tag.textContent="สุ่มเหตุการณ์";
   let e=chainEvent();
- if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[
-  ["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],
-  ["ลงทุนสวนกระแส",{recession:true,invest:25000,money:-20000,knowledge:8,message:"เสี่ยงลงทุนในช่วงวิกฤต"}]]};
- if(!e&&Math.random()<.012&&!G.pandemic)e={r:"CHAIN",icon:"🦠",title:"โรคระบาดใหญ่",desc:"เมืองประกาศมาตรการควบคุมโรค หลายธุรกิจหยุดชะงัก",choices:[
-  ["กักตัวและดูแลตัวเอง",{pandemic:true,health:4,money:-3000,happy:-5,message:"ผ่านช่วงโรคระบาดอย่างปลอดภัย"}],
-  ["ทำงานต่อ",{pandemic:true,health:-15,money:5000,happy:-8,message:"ยังทำงานต่อท่ามกลางโรคระบาด"}]]};
+  if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],["ลงทุนสวนกระแส",{recession:true,invest:25000,money:-20000,knowledge:8,message:"เสี่ยงลงทุนในช่วงวิกฤต"}]]};
+  if(!e&&!G.pandemic&&Math.random()<.012)e={r:"CHAIN",icon:"🦠",title:"โรคระบาดใหญ่",desc:"เมืองประกาศมาตรการควบคุมโรค หลายธุรกิจหยุดชะงัก",choices:[["กักตัวและดูแลตัวเอง",{pandemic:true,health:4,money:-3000,happy:-5,message:"ผ่านช่วงโรคระบาดอย่างปลอดภัย"}],["ทำงานต่อ",{pandemic:true,health:-15,money:5000,happy:-8,message:"ยังทำงานต่อท่ามกลางโรคระบาด"}]]};
   if(!e)e=weightedPick();
   if(!e)e={r:"COMMON",icon:"☀️",title:"วันธรรมดา",desc:"เดือนนี้ไม่มีเหตุการณ์พิเศษ แต่ชีวิตยังเดินต่อไป",choices:[["เดินหน้าต่อ",{happy:2,knowledge:1,message:"ใช้ชีวิตต่ออย่างมั่นคง"}]]};
-  currentEvent=e; render(); drawEvent();
+  currentEvent=e; drawEvent();
  }catch(err){
   console.error("nextEvent",err);
   const area=document.getElementById("eventArea");
-  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>เกิดเหตุการณ์แล้ว</h2><p>กดปุ่มด้านล่างเพื่อสุ่มเหตุการณ์ใหม่</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>สุ่มเหตุการณ์ไม่สำเร็จ</h2><p>กดปุ่มด้านล่างเพื่อสุ่มใหม่</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
  }
 }
 function drawEvent(){
- const e=currentEvent;document.getElementById("rarityBadge").textContent=e.r;
- document.getElementById("chainTag").textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":"";
- document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">${e.icon}</div><h2>${e.title}</h2><p>${e.desc}</p><div class="choices">${e.choices.map((c,i)=>`<button class="choice" onclick="choose(${i})"><b>${c[0]}</b><small>เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน</small></button>`).join("")}</div></div>`;
+ const e=currentEvent; if(!e)return;
+ const badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag"),area=document.getElementById("eventArea");
+ if(badge)badge.textContent=e.r; if(tag)tag.textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":""; if(!area)return;
+ area.replaceChildren();
+ const card=document.createElement("div");card.className="event-card";
+ const icon=document.createElement("div");icon.className="event-icon";icon.textContent=e.icon;
+ const h=document.createElement("h2");h.textContent=e.title;
+ const p=document.createElement("p");p.textContent=e.desc;
+ const choices=document.createElement("div");choices.className="choices";
+ e.choices.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="choice";const strong=document.createElement("b");strong.textContent=c[0];const small=document.createElement("small");small.textContent="เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน";b.append(strong,small);b.addEventListener("click",()=>choose(i));choices.appendChild(b)});
+ card.append(icon,h,p,choices);area.appendChild(card);
 }
 function choose(i){
  const e=currentEvent,c=e.choices[i], before=G.money;
@@ -416,7 +437,7 @@ async function bootOnline(user){
     }else{
       document.getElementById("creator").classList.add("hidden");
       document.getElementById("game").classList.remove("hidden");
-      render(); showActivity(); setTimeout(showActivity,120);
+      render(); showActivity(); setTimeout(showActivity,120); setTimeout(showActivity,600);
     }
     addOnlineUserBar();
   }catch(e){
