@@ -17,9 +17,37 @@ main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#1119
 .side{margin-bottom:12px}.side h3{margin:0 0 12px}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #202a40}.row:last-child{border-bottom:0}.value{font-weight:800;text-align:right}.good{color:#64dfa1}.bad{color:#ff7e91}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap}.tabs button.active{background:#637cff;border-color:#637cff}.list{display:grid;gap:8px}.list-item{padding:11px 12px;border-radius:12px;background:#0d1525;border:1px solid #222e48}.modal{position:fixed;inset:0;background:#0009;z-index:20;display:grid;place-items:center;padding:16px}.modal-card{position:relative;width:min(650px,100%);max-height:88vh;overflow:auto;background:#111a2c;border:1px solid #35415c;border-radius:20px;padding:22px}.close{position:absolute;right:14px;top:14px;font-size:22px}.continue b{color:#8ea1ff}
 @media(max-width:800px){main{padding:14px 10px 40px}.form-grid{grid-template-columns:1fr}.trait-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.life-head{align-items:flex-start}.event-card h2{font-size:23px}.top{padding:12px 10px}.brand{font-size:20px}}
 
+
+#authScreen{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:#070b15ee;backdrop-filter:blur(12px)}
+.auth-card{width:min(520px,100%);background:#111a2c;border:1px solid #34415e;border-radius:22px;padding:24px;box-shadow:0 25px 80px #0008}
+.auth-card h1{margin:0 0 8px;font-size:28px}.auth-card p{color:#9aa9c3;line-height:1.6}.auth-tabs{display:flex;gap:8px;margin:16px 0}.auth-tabs button{flex:1;background:#0c1424;border:1px solid #2d3954;border-radius:12px;padding:11px}.auth-tabs button.active{background:#637cff;border-color:#637cff}.auth-form{display:grid;gap:10px}.auth-form label{display:grid;gap:6px;color:#aebbd0;font-size:13px}.auth-msg{margin-top:10px;padding:10px;border-radius:10px;background:#0c1424;color:#aebbd0;font-size:13px}.auth-msg.err{color:#ff9aaa}.auth-msg.ok{color:#7ce4ad}.cloud-note{margin-top:14px;padding:11px;border-radius:12px;background:#0d1729;border:1px solid #25324b;font-size:12px;color:#91a0bc}
+.userbar{display:flex;align-items:center;gap:8px}.userbar button{background:#151d31;border:1px solid #2b3652;border-radius:12px;padding:9px 12px}
+
 </style>
 </head>
 <body>
+
+<div id="authScreen">
+  <div class="auth-card">
+    <div style="font-size:52px">☁️🎮</div>
+    <h1>MY LIFE ONLINE</h1>
+    <p>เข้าสู่ระบบเพื่อเก็บชีวิตของมึงไว้บนคลาวด์ เล่นต่อจากเครื่องอื่นได้ และมี Leaderboard แยกผู้เล่น</p>
+    <div class="auth-tabs">
+      <button id="loginTab" class="active" onclick="authMode('login')">เข้าสู่ระบบ</button>
+      <button id="signupTab" onclick="authMode('signup')">สมัครสมาชิก</button>
+    </div>
+    <div class="auth-form">
+      <label>อีเมล<input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+      <label>รหัสผ่าน<input id="authPassword" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร"></label>
+      <label id="authNameWrap" class="hidden">ชื่อที่แสดง<input id="authName" maxlength="18" placeholder="นนท์"></label>
+      <button id="authBtn" class="primary big" onclick="submitAuth()">เข้าสู่ระบบ</button>
+    </div>
+    <div id="authMsg" class="auth-msg hidden"></div>
+    <div id="configMsg" class="cloud-note hidden"></div>
+    <div class="cloud-note">🔐 เซฟของแต่ละบัญชีแยกกันด้วย Supabase + Row Level Security</div>
+  </div>
+</div>
+
 <div id="app">
   <header class="top">
     <div>
@@ -251,5 +279,148 @@ window.addEventListener("load",()=>{if(localStorage.getItem(KEY)){document.getEl
 render();
 
 </script>
+
+<script>
+/* ===== MY LIFE ONLINE / SUPABASE =====
+   Put your project's URL and PUBLISHABLE/ANON key here.
+   Never put a service_role key in this file.
+*/
+const SUPABASE_URL = "https://xmdfulbbbuaytjgmajbn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hp-Dj-J7ea6SvimMJyOsjw_RDIfpi5g";
+let sb = null;
+let onlineUser = null;
+let authIsSignup = false;
+
+function authMode(mode){
+  authIsSignup = mode === "signup";
+  document.getElementById("loginTab").classList.toggle("active", !authIsSignup);
+  document.getElementById("signupTab").classList.toggle("active", authIsSignup);
+  document.getElementById("authNameWrap").classList.toggle("hidden", !authIsSignup);
+  document.getElementById("authBtn").textContent = authIsSignup ? "สมัครสมาชิก" : "เข้าสู่ระบบ";
+  setAuthMsg("");
+}
+function setAuthMsg(msg, type=""){
+  const el=document.getElementById("authMsg");
+  el.textContent=msg;
+  el.className="auth-msg"+(msg?"":" hidden")+(type?" "+type:"");
+}
+function configured(){
+  return SUPABASE_URL.startsWith("http") && !SUPABASE_URL.includes("YOUR_") &&
+         SUPABASE_KEY && !SUPABASE_KEY.includes("YOUR_");
+}
+async function submitAuth(){
+  if(!configured()){setAuthMsg("ยังไม่ได้ใส่ Supabase URL กับ Publishable/Anon Key ใน game", "err"); return;}
+  const email=document.getElementById("authEmail").value.trim();
+  const password=document.getElementById("authPassword").value;
+  const name=document.getElementById("authName").value.trim() || "ผู้เล่น";
+  if(!email || password.length<6){setAuthMsg("ใส่อีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร", "err");return;}
+  setAuthMsg("กำลังเชื่อมต่อ...");
+  let result;
+  if(authIsSignup){
+    result=await sb.auth.signUp({email,password,options:{data:{display_name:name}}});
+    if(result.error){setAuthMsg(result.error.message,"err");return;}
+    if(!result.data.session){setAuthMsg("สมัครสำเร็จ ตรวจอีเมลเพื่อยืนยันบัญชีก่อนเข้าสู่ระบบ","ok");return;}
+  }else{
+    result=await sb.auth.signInWithPassword({email,password});
+    if(result.error){setAuthMsg(result.error.message,"err");return;}
+  }
+  await bootOnline(result.data.user);
+}
+async function bootOnline(user){
+  onlineUser=user;
+  document.getElementById("authScreen").classList.add("hidden");
+  const {data: profile}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(!profile){
+    await sb.from("profiles").insert({id:user.id,display_name:user.user_metadata?.display_name||"ผู้เล่น",avatar:"🧑🏻"});
+  }
+  await loadCloudGame();
+  if(!G){
+    // Existing creator remains available; use cloud account instead of browser-only save.
+    document.getElementById("creator").classList.remove("hidden");
+    document.getElementById("game").classList.add("hidden");
+  }else{
+    document.getElementById("creator").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+    render(); nextEvent();
+  }
+  addOnlineUserBar();
+}
+async function loadCloudGame(){
+  const {data,error}=await sb.from("games").select("state").eq("user_id",onlineUser.id).maybeSingle();
+  if(error){console.warn(error);return;}
+  if(data?.state){G=data.state;}
+}
+async function cloudSave(){
+  if(!sb || !onlineUser || !G)return;
+  const {error}=await sb.from("games").upsert({user_id:onlineUser.id,state:G,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+  if(error) console.warn("Cloud save:",error);
+  await updateLeaderboard();
+}
+async function updateLeaderboard(){
+  if(!sb||!onlineUser||!G)return;
+  const display=G.name||onlineUser.user_metadata?.display_name||"ผู้เล่น";
+  await sb.from("leaderboard").upsert({
+    user_id:onlineUser.id,name:display,avatar:G.avatar||"🧑🏻",
+    age:G.age,money:Math.round(G.money||0),happiness:Math.round(G.happy||0),
+    knowledge:Math.round(G.knowledge||0),updated_at:new Date().toISOString()
+  },{onConflict:"user_id"});
+}
+async function showLeaderboard(){
+  if(!sb){alert("ยังไม่ได้เชื่อมต่อฐานข้อมูล");return;}
+  const {data,error}=await sb.from("leaderboard").select("*").order("money",{ascending:false}).limit(20);
+  if(error){alert("โหลด Leaderboard ไม่สำเร็จ: "+error.message);return;}
+  document.getElementById("modalContent").innerHTML=`<h2>🏆 Leaderboard</h2>
+  <p class="muted">20 อันดับผู้เล่นที่มีเงินมากที่สุด</p>
+  <div class="list">${(data||[]).map((x,i)=>`<div class="list-item"><b>#${i+1} ${esc(x.avatar||"🧑🏻")} ${esc(x.name||"ผู้เล่น")}</b><br><span class="muted">อายุ ${x.age} • 💰 ${money(x.money)} • 😊 ${x.happiness} • 🧠 ${x.knowledge}</span></div>`).join("")||"<div class='list-item'>ยังไม่มีผู้เล่น</div>"}</div>`;
+  document.getElementById("modal").classList.remove("hidden");
+}
+async function signOutOnline(){
+  if(sb) await sb.auth.signOut();
+  onlineUser=null;G=null;location.reload();
+}
+function addOnlineUserBar(){
+  const top=document.querySelector(".top-actions");
+  if(!top||document.getElementById("onlineTools"))return;
+  const wrap=document.createElement("div");wrap.id="onlineTools";wrap.className="userbar";
+  wrap.innerHTML=`<button onclick="showLeaderboard()">🏆</button><button onclick="signOutOnline()">ออก</button>`;
+  top.prepend(wrap);
+}
+/* Override local save/load with cloud save for online mode. */
+const oldStartGame=window.startGame;
+window.startGame=async function(){
+  oldStartGame();
+  await cloudSave();
+};
+const oldChoose=window.choose;
+window.choose=async function(i){
+  oldChoose(i);
+  await cloudSave();
+};
+const oldAdvance=window.advance;
+window.advance=async function(){
+  oldAdvance();
+  await cloudSave();
+};
+const oldNewGame=window.newGame;
+window.newGame=function(){
+  if(confirm("เริ่มชีวิตใหม่และแทนที่เซฟบนคลาวด์?")){
+    localStorage.removeItem(KEY);
+    G=null;
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("creator").classList.remove("hidden");
+  }
+};
+window.addEventListener("load",async()=>{
+  if(!configured()){
+    document.getElementById("configMsg").classList.remove("hidden");
+    document.getElementById("configMsg").textContent="⚙️ ยังไม่ตั้งค่า Supabase: ใส่ SUPABASE_URL และ SUPABASE_PUBLISHABLE_KEY ใน index.html ก่อนอัปโหลด";
+    return;
+  }
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const {data:{session}}=await sb.auth.getSession();
+  if(session) await bootOnline(session.user);
+});
+</script>
+
 </body>
 </html>
