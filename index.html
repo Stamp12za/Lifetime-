@@ -2,108 +2,254 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080b16">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
 <title>MY LIFE — Life Simulator</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&family=Prompt:wght@400;500;600;700&display=swap');
-:root{--bg:#080b16;--panel:#11172a;--panel2:#171e34;--line:#29324d;--text:#f7f8ff;--muted:#8e99b7;--a:#8b7cff;--good:#45d483;--bad:#ff647c;--gold:#ffc857;--cyan:#4ed7ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#25264f 0,#080b16 38%,#060811 100%);color:var(--text);font-family:Prompt,Kanit,system-ui,sans-serif}button{font:inherit}
-.app{max-width:1220px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.brand{font:800 28px Kanit}.brand span{color:var(--a)}.top-actions{display:flex;gap:7px}.iconbtn{border:1px solid var(--line);background:#12182a;color:#fff;border-radius:12px;padding:9px 12px;cursor:pointer}
-.layout{display:grid;grid-template-columns:275px 1fr;gap:15px}.panel{background:linear-gradient(180deg,#12182b,#0f1425);border:1px solid var(--line);border-radius:21px;box-shadow:0 18px 50px #0005}.profile{padding:16px;height:max-content;position:sticky;top:12px}.avatar{width:100%;aspect-ratio:1;border-radius:18px;background:linear-gradient(145deg,#292650,#151c34);display:flex;align-items:center;justify-content:center;font-size:108px;border:1px solid #3b4260}.pname{font-size:22px;font-weight:800;margin-top:12px}.job{color:#a99fff;font-weight:700}.muted{color:var(--muted);font-size:12px}.bar{height:7px;background:#252c43;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--cyan));border-radius:99px}.badbox{margin-top:12px;padding:10px;border:1px solid #4a2940;background:#1d1421;color:#ff9bae;border-radius:12px;font-size:12px}.main{display:flex;flex-direction:column;gap:15px}.status{padding:16px}.date{display:flex;justify-content:space-between;align-items:end}.date h1{font-size:24px;margin:0}.age{color:var(--muted);font-size:13px}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:13px}.stat{background:#0d1322;border:1px solid #232c45;border-radius:14px;padding:11px}.stat small{color:var(--muted)}.num{font-size:20px;font-weight:800;margin-top:3px}.money .num{color:var(--gold)}.event{padding:20px}.rarity{display:inline-block;padding:4px 9px;border-radius:99px;background:#27223d;color:#c5bfff;border:1px solid #453d70;font-size:11px;font-weight:800}.rarity.uncommon{color:#64e6b3}.rarity.rare{color:#62d8ff}.rarity.legendary{color:#ffd166}.rarity.mystery{color:#ff75dd}.event h2{font-size:28px;margin:12px 0 6px}.desc{line-height:1.75;color:#c4cbdf}.effects{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0}.effect{background:#0b1120;border:1px solid #252f49;border-radius:10px;padding:7px 10px;font-size:12px}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.choice{background:#202942;color:#fff;border:1px solid #343d5b;border-radius:13px;padding:13px;text-align:left;cursor:pointer}.choice:hover{border-color:var(--a);transform:translateY(-1px)}.choice b{display:block}.choice span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.history{padding:15px}.history h3{margin:0 0 8px}.log{max-height:230px;overflow:auto}.logrow{display:flex;gap:9px;border-bottom:1px solid #20283f;padding:8px 2px;font-size:12px}.dot{width:7px;height:7px;background:var(--a);border-radius:50%;margin-top:6px;flex:none}
-.overlay{position:fixed;inset:0;background:#02040dcc;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal{width:min(700px,100%);max-height:90vh;overflow:auto;background:#12182a;border:1px solid #36405d;border-radius:22px;padding:20px}.modal h2{margin-top:0}.modalgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.modalcard{background:#0d1322;border:1px solid #242e47;border-radius:12px;padding:12px}.modalcard b{font-size:18px}.close{margin-top:12px;width:100%;padding:11px;border:0;border-radius:11px;background:var(--a);color:white;cursor:pointer}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,25px);opacity:0;background:#f0f1ff;color:#090c18;padding:10px 14px;border-radius:12px;font-weight:700;z-index:20;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.profile{position:relative;display:grid;grid-template-columns:95px 1fr;gap:12px}.avatar{grid-row:span 3;font-size:58px}.pname{margin:0}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}}@media(max-width:520px){.app{padding:9px}.choices{grid-template-columns:1fr}.event h2{font-size:23px}.top .iconbtn:nth-child(2){display:none}}
+*{box-sizing:border-box}body{margin:0;background:#080d19;color:#eef3ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.hidden{display:none!important}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 0%,#203b70 0,transparent 32%),radial-gradient(circle at 100% 30%,#43236c 0,transparent 28%);opacity:.45}
+#app{min-height:100vh}.top{position:sticky;top:0;z-index:5;padding:15px max(16px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;background:#0b1020eF;border-bottom:1px solid #26304a;backdrop-filter:blur(14px)}.brand{font-size:24px;font-weight:900;letter-spacing:2px}.sub,.muted{color:#91a0bc;font-size:13px}.top-actions{display:flex;gap:8px}.top-actions button,.tabs button,.close{background:#151d31;border:1px solid #2b3652;border-radius:12px;padding:9px 12px}
+main{max-width:1180px;margin:auto;padding:22px 16px 50px}.panel{background:#11192a;border:1px solid #27334d;border-radius:20px;padding:18px;box-shadow:0 15px 45px #0004}.hero{text-align:center;font-size:62px;margin-top:10px}.panel>h1{text-align:center;margin:4px 0 8px;font-size:32px}.panel>p{text-align:center;max-width:650px;margin:0 auto 22px;line-height:1.7}
+.form-grid{display:grid;grid-template-columns:1fr 180px;gap:12px;max-width:600px;margin:auto}.form-grid label{display:grid;gap:7px;color:#aebbd2;font-size:13px}input,select{width:100%;background:#0b1220;border:1px solid #33405d;color:#fff;padding:12px;border-radius:12px;outline:none}.trait-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:850px;margin:16px auto}.trait{padding:14px;background:#0d1526;border:1px solid #2a3651;border-radius:15px;text-align:left}.trait small{display:block;color:#8797b4;margin-top:5px}.trait.selected{border-color:#6f8cff;box-shadow:0 0 0 2px #6f8cff33 inset}.primary{border:0;border-radius:13px;padding:12px 18px;background:linear-gradient(135deg,#637cff,#9c61ff);font-weight:800}.big{display:block;width:min(850px,100%);margin:18px auto 0;font-size:17px;padding:15px}.continue{max-width:850px;margin:12px auto 0;padding:12px;border-radius:12px;background:#0c1525;text-align:center}
+.life-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.profile{display:flex;align-items:center;gap:12px}.avatar{font-size:42px;background:#121d32;border:1px solid #2c3955;width:62px;height:62px;border-radius:18px;display:grid;place-items:center}.badge{font-size:11px;font-weight:900;padding:7px 10px;border-radius:999px;background:#25304a;color:#b7c5ff}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:12px}.stat{background:#10182a;border:1px solid #26334e;border-radius:15px;padding:12px}.stat-top{display:flex;justify-content:space-between;gap:5px;color:#9aa9c3;font-size:12px}.stat b{display:block;font-size:21px;margin-top:5px}.bar{height:5px;background:#202a40;border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:#6f8cff;border-radius:9px}
+.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:12px}.event-panel{min-height:370px}.event-title{display:flex;justify-content:space-between;color:#91a0bc;font-size:13px}.event-card{margin-top:18px;padding:22px;border-radius:18px;background:linear-gradient(145deg,#151f34,#0d1423);border:1px solid #2e3b58}.event-icon{font-size:52px}.event-card h2{font-size:27px;margin:10px 0 8px}.event-card p{color:#aebbd0;line-height:1.65}.effects{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.effect{padding:6px 9px;border-radius:999px;background:#1b263d;font-size:12px}.choices{display:grid;gap:8px}.choice{padding:13px 14px;border:1px solid #34415d;background:#121b2e;border-radius:12px;text-align:left}.choice:hover{background:#1a2740;border-color:#7187ff}.choice small{display:block;color:#8494b1;margin-top:3px}
+.side{margin-bottom:12px}.side h3{margin:0 0 12px}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #202a40}.row:last-child{border-bottom:0}.value{font-weight:800;text-align:right}.good{color:#64dfa1}.bad{color:#ff7e91}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.tabs button{white-space:nowrap}.tabs button.active{background:#637cff;border-color:#637cff}.list{display:grid;gap:8px}.list-item{padding:11px 12px;border-radius:12px;background:#0d1525;border:1px solid #222e48}.modal{position:fixed;inset:0;background:#0009;z-index:20;display:grid;place-items:center;padding:16px}.modal-card{position:relative;width:min(650px,100%);max-height:88vh;overflow:auto;background:#111a2c;border:1px solid #35415c;border-radius:20px;padding:22px}.close{position:absolute;right:14px;top:14px;font-size:22px}.continue b{color:#8ea1ff}
+@media(max-width:800px){main{padding:14px 10px 40px}.form-grid{grid-template-columns:1fr}.trait-grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.life-head{align-items:flex-start}.event-card h2{font-size:23px}.top{padding:12px 10px}.brand{font-size:20px}}
+
 </style>
 </head>
 <body>
-<div class="app">
-<div class="top"><div class="brand">MY <span>LIFE</span></div><div class="top-actions"><button class="iconbtn" onclick="stats()">📊 สถิติ</button><button class="iconbtn" onclick="newLife()">🔄 ชีวิตใหม่</button></div></div>
-<div class="layout">
-<aside class="panel profile">
-<div class="avatar" id="avatar">🧑🏻</div>
-<div><div class="pname" id="name">นนท์</div><div class="job" id="job">นักศึกษา</div><div class="muted" id="bio">อายุ 18 ปี • จุดเริ่มต้นของชีวิต</div></div>
-<div style="grid-column:1/-1"><div class="muted" style="margin:7px 0 5px">❤️ พลังชีวิต</div><div class="bar"><i id="hbar"></i></div><div id="debt"></div><div class="muted" style="margin-top:11px">เป้าหมาย: สร้างชีวิตที่คุณภูมิใจ</div></div>
-</aside>
-<main class="main">
-<section class="panel status"><div class="date"><div><h1 id="date"></h1><div class="age" id="age"></div></div><div class="muted">1 เทิร์น = 1 เดือน</div></div><div class="stats" id="stats"></div></section>
-<section class="panel event"><div id="rarity" class="rarity">COMMON</div><h2 id="title"></h2><div class="desc" id="desc"></div><div class="effects" id="effects"></div><div class="choices" id="choices"></div></section>
-<section class="panel history"><h3>📜 บันทึกชีวิต</h3><div class="log" id="log"></div></section>
-</main></div></div>
-<div class="overlay" id="overlay"><div class="modal"><h2 id="modalTitle">📊 สถิติชีวิต</h2><div id="modalBody"></div><button class="close" onclick="closeModal()">ปิด</button></div></div><div class="toast" id="toast"></div>
+<div id="app">
+  <header class="top">
+    <div>
+      <div class="brand">MY LIFE</div>
+      <div class="sub">Life Simulator • 1 เทิร์น = 1 เดือน</div>
+    </div>
+    <div class="top-actions">
+      <button onclick="saveGame()">💾</button>
+      <button onclick="newGame()">🔄</button>
+    </div>
+  </header>
 
+  <main>
+    <section id="creator" class="panel">
+      <div class="hero">🎮</div>
+      <h1>เริ่มต้นชีวิตใหม่</h1>
+      <p class="muted">มึงจะใช้ชีวิตตั้งแต่อายุ 18 จนถึง 80 ปี ทุกเดือนมีโอกาสเกิดเหตุการณ์ที่เปลี่ยนชีวิต</p>
+      <div class="form-grid">
+        <label>ชื่อ
+          <input id="nameInput" maxlength="18" value="นนท์">
+        </label>
+        <label>ตัวละคร
+          <select id="avatarInput">
+            <option>🧑🏻</option><option>👩🏻</option><option>🧑🏽</option><option>👩🏽</option>
+            <option>🧑🏻‍💻</option><option>🧑🏻‍🎨</option><option>🧑🏻‍🚀</option><option>🧑🏻‍🍳</option>
+          </select>
+        </label>
+      </div>
+      <div class="trait-grid">
+        <button class="trait selected" data-trait="smart" onclick="pickTrait(this)">🧠 หัวไว <small>ความรู้ +12</small></button>
+        <button class="trait" data-trait="lucky" onclick="pickTrait(this)">🍀 ดวงดี <small>โอกาส Rare+ สูงขึ้น</small></button>
+        <button class="trait" data-trait="healthy" onclick="pickTrait(this)">💪 แข็งแรง <small>สุขภาพ +12</small></button>
+        <button class="trait" data-trait="social" onclick="pickTrait(this)">😎 เข้าสังคมเก่ง <small>ความสุข +12</small></button>
+      </div>
+      <button class="primary big" onclick="startGame()">เริ่มชีวิต</button>
+      <div id="continueBox" class="continue hidden"></div>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="life-head">
+        <div class="profile">
+          <div id="avatar" class="avatar">🧑🏻</div>
+          <div><b id="playerName">นนท์</b><div id="lifeTime" class="muted">ปีที่ 1 — เดือนที่ 1 • อายุ 18</div></div>
+        </div>
+        <div id="rarityBadge" class="badge">COMMON</div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="grid">
+        <section class="panel event-panel">
+          <div class="event-title"><span>📅 เดือนนี้</span><span id="chainTag"></span></div>
+          <div id="eventArea"></div>
+        </section>
+
+        <aside>
+          <section class="panel side">
+            <h3>👤 ชีวิตของมึง</h3>
+            <div id="sideInfo"></div>
+          </section>
+          <section class="panel side">
+            <h3>🎯 เป้าหมาย</h3>
+            <div id="goals"></div>
+          </section>
+        </aside>
+      </div>
+
+      <nav class="tabs">
+        <button class="active" onclick="showTab('life',this)">❤️ ชีวิต</button>
+        <button onclick="showTab('assets',this)">💰 ทรัพย์สิน</button>
+        <button onclick="showTab('people',this)">👥 คนรอบตัว</button>
+        <button onclick="showTab('history',this)">📜 ประวัติ</button>
+      </nav>
+      <section id="tabArea" class="panel"></section>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
 <script>
-const initial={year:1,month:1,age:18,money:12500,health:87,happy:72,knowledge:54,job:"นักศึกษา",salary:0,debt:0,partner:false,house:false,business:false,invest:0,pandemic:false,recession:false,unemployed:false,months:0,events:0,choices:0,good:0,bad:0,name:"นนท์",avatar:"🧑🏻"};
-let G={...initial},current=null;
-const $=x=>document.getElementById(x),clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n)),fmt=n=>new Intl.NumberFormat("th-TH").format(Math.round(n));
-function render(){ $("date").textContent=`ปีที่ ${G.year} — เดือนที่ ${G.month}`;$("age").textContent=`อายุ ${G.age} ปี`;$("name").textContent=G.name;$("job").textContent=G.job;$("avatar").textContent=G.avatar;$("hbar").style.width=clamp(G.health)+"%";$("bio").textContent=`อายุ ${G.age} ปี • ${G.partner?"❤️ มีความรัก • ":""}${G.house?"🏠 มีบ้าน • ":""}${G.business?"🏢 มีธุรกิจ":"กำลังสร้างอนาคต"}`;$("debt").innerHTML=G.debt>0?`<div class="badbox">💳 หนี้สิน ${fmt(G.debt)} บาท</div>`:"";
-const a=[["💰","เงิน",fmt(G.money)],["❤️","สุขภาพ",Math.round(G.health)+"%"],["😊","ความสุข",Math.round(G.happy)+"%"],["🧠","ความรู้",Math.round(G.knowledge)+"%"],["💵","รายได้/เดือน",fmt(G.salary)]];
-$("stats").innerHTML=a.map((x,i)=>`<div class="stat ${i===0?"money":""}"><small>${x[0]} ${x[1]}</small><div class="num">${x[2]}</div>${i>0&&i<4?`<div class="bar" style="margin-top:6px"><i style="width:${clamp(parseFloat(x[2]))}%"></i></div>`:""}</div>`).join("")}
-function log(t){$("log").insertAdjacentHTML("afterbegin",`<div class="logrow"><i class="dot"></i><div>${t}</div></div>`)}
-const E=[
-["Common",60,"☕ เดือนธรรมดา","ชีวิตไม่ได้มีอะไรหวือหวา แต่การเลือกเล็ก ๆ จะสะสมเป็นอนาคต",[
-["📚 ตั้งใจเรียน","ความรู้ +3 / ความสุข -1",()=>{G.knowledge+=3;G.happy-=1}],["🛋️ พักผ่อน","สุขภาพ +3 / ความสุข +3",()=>{G.health+=3;G.happy+=3}]]],
-["Common",60,"🛍️ ของที่อยากได้","ของที่เล็งไว้นานกำลังลดราคา คุณจะใช้เงินหรือเก็บไว้?",[
-["ซื้อเลย","เงิน -2,000 / ความสุข +7",()=>{G.money-=2000;G.happy+=7}],["เก็บเงิน","ความรู้ +1",()=>G.knowledge+=1]]],
-["Common",60,"👨‍👩‍👦 มื้ออาหารกับครอบครัว","มื้อธรรมดา ๆ กลับทำให้คุณรู้สึกอบอุ่นกว่าที่คิด",[
-["ไปกินด้วยกัน","ความสุข +6",()=>G.happy+=6],["ทำงานก่อน","เงิน +2,000 / ความสุข -2",()=>{G.money+=2000;G.happy-=2}]]],
-["Uncommon",25,"💼 ได้งานพิเศษ","งานพิเศษรายได้ดี แต่ต้องแลกกับเวลาพักผ่อน",[
-["รับงาน","เงิน +8,000 / สุขภาพ -4",()=>{G.money+=8000;G.health-=4}],["ปฏิเสธ","ความสุข +2",()=>G.happy+=2]]],
-["Uncommon",25,"❤️ พบคนถูกใจ","คุณพบใครบางคนที่คุยด้วยแล้วเวลาผ่านไปเร็วมาก",[
-["ลองเปิดใจ","มีแฟน / ความสุข +12",()=>{G.partner=true;G.happy+=12}],["ยังไม่พร้อม","ความรู้ +2",()=>G.knowledge+=2]]],
-["Uncommon",25,"🎓 โอกาสเรียนต่อ","คุณได้รับโอกาสเข้าเรียนหลักสูตรที่ดีขึ้น",[
-["คว้าโอกาส","ความรู้ +12 / เงิน -5,000",()=>{G.knowledge+=12;G.money-=5000}],["ทำงานต่อ","เงิน +10,000",()=>G.money+=10000]]],
-["Rare",10,"📈 ลงทุนแล้วหุ้นพุ่ง","สินทรัพย์ของคุณโตแรงกว่าคาด จะล็อกกำไรหรือเสี่ยงต่อ?",[
-["ขายทำกำไร","เงิน +80,000",()=>G.money+=80000],["ถือต่อ","เงิน +20,000 / ความเสี่ยงเพิ่ม",()=>{G.money+=20000;G.invest++}]]],
-["Rare",10,"🚀 ธุรกิจเริ่มดัง","งานเล็ก ๆ หลังเลิกเรียน/งานเริ่มมีลูกค้าจำนวนมาก",[
-["ลุยเต็มตัว","เจ้าของกิจการ / เงิน +60,000",()=>{G.business=true;G.job="เจ้าของกิจการ";G.salary=40000;G.money+=60000;G.knowledge+=6}],["ทำเป็นงานเสริม","เงิน +30,000 / ความรู้ +3",()=>{G.money+=30000;G.knowledge+=3}]]],
-["Rare",10,"🚗 อุบัติเหตุ","เหตุการณ์ไม่คาดคิดทำให้ต้องหยุดพักและเสียค่าใช้จ่าย",[
-["รักษาตัว","เงิน -25,000 / สุขภาพ -12",()=>{G.money-=25000;G.health-=12}],["ฝืนทำงาน","เงิน -10,000 / สุขภาพ -25",()=>{G.money-=10000;G.health-=25}]]],
-["Rare",10,"🏠 ครอบครัวมอบบ้าน","คุณได้รับบ้านจากครอบครัว ภาระค่าเช่าจึงหายไป",[
-["รับบ้าน","ได้บ้าน / ความสุข +12",()=>{G.house=true;G.happy+=12}],["ขายบ้าน","เงิน +1,200,000",()=>G.money+=1200000]]],
-["Legendary",4,"🎉 ถูกรางวัลที่ 1!","สลากที่คุณซื้อไว้ถูกรางวัลที่ 1 ชีวิตกำลังเปลี่ยนไปตลอดกาล",[
-["รับเงินรางวัล","เงิน +6,000,000 / ความสุข +20",()=>{G.money+=6000000;G.happy+=20}]]],
-["Legendary",4,"🍀 ได้รับมรดก","ญาติห่าง ๆ ทิ้งทรัพย์สินจำนวนมหาศาลไว้ให้",[
-["รับมรดก","เงิน +20,000,000 / ความสุข +25",()=>{G.money+=20000000;G.happy+=25}]]],
-["Legendary",4,"💔 ความสัมพันธ์พัง","ความสัมพันธ์ที่คิดว่าจะไปต่อกลับมาถึงจุดแตกหัก",[
-["เริ่มใหม่","เลิกกับแฟน / ความสุข -18 / ความรู้ +4",()=>{G.partner=false;G.happy-=18;G.knowledge+=4}],["พยายามแก้ไข","ความสุข -8 / สุขภาพ -4",()=>{G.happy-=8;G.health-=4}]]],
-["???",1,"🌌 โอกาสที่ไม่มีใครอธิบายได้","คุณพบโอกาสครั้งเดียวในชีวิต อาจเป็นจุดเปลี่ยนครั้งใหญ่ที่สุด",[
-["คว้าโอกาส","เงิน +50,000,000 / ความสุข +40",()=>{G.money+=50000000;G.happy+=40}],["เดินผ่านไป","ความรู้ +20",()=>G.knowledge+=20]]]
+const KEY="mylife_final_v1";
+const TRAITS={smart:"🧠 หัวไว",lucky:"🍀 ดวงดี",healthy:"💪 แข็งแรง",social:"😎 เข้าสังคมเก่ง"};
+let G=null, selectedTrait="smart", currentEvent=null;
+
+const base=()=>({year:1,month:1,age:18,money:12500,health:87,happy:72,knowledge:54,salary:0,job:"นักศึกษา",debt:0,partner:false,married:false,children:0,house:false,car:false,business:false,invest:0,property:0,degree:false,pandemic:false,recession:false,unemployed:false,months:0,events:0,good:0,bad:0,name:"นนท์",avatar:"🧑🏻",trait:"smart",friends:45,family:75,partnerRel:0,history:[],achievements:[]});
+
+function pickTrait(el){document.querySelectorAll(".trait").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selectedTrait=el.dataset.trait}
+function startGame(){G=base();G.name=document.getElementById("nameInput").value.trim()||"นนท์";G.avatar=document.getElementById("avatarInput").value;G.trait=selectedTrait;if(G.trait==="smart")G.knowledge+=12;if(G.trait==="healthy")G.health+=12;if(G.trait==="social")G.happy+=12;if(G.trait==="lucky")G.money+=3000;G.history=[];saveGame();document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();nextEvent()}
+function saveGame(){if(G)localStorage.setItem(KEY,JSON.stringify(G));}
+function loadGame(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x){G=x;document.getElementById("creator").classList.add("hidden");document.getElementById("game").classList.remove("hidden");render();nextEvent();return true}}catch(e){}return false}
+function newGame(){if(confirm("เริ่มชีวิตใหม่? เซฟเดิมจะถูกแทนที่")){localStorage.removeItem(KEY);location.reload()}}
+function money(n){return Math.round(n).toLocaleString("th-TH")+" ฿"}
+function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function render(){
+ if(!G) return;
+ document.getElementById("playerName").textContent=G.name;
+ document.getElementById("avatar").textContent=G.avatar;
+ document.getElementById("lifeTime").textContent=`ปีที่ ${G.year} — เดือนที่ ${G.month} • อายุ ${G.age} ปี`;
+ const stats=[
+  ["💰","เงิน",money(G.money),Math.min(100,G.money/1000)],
+  ["❤️","สุขภาพ",G.health, G.health],
+  ["😊","ความสุข",G.happy,G.happy],
+  ["🧠","ความรู้",G.knowledge,G.knowledge],
+  ["💼","รายได้",G.salary?money(G.salary)+"/ด.":"—",Math.min(100,G.salary/1000)]
+ ];
+ document.getElementById("stats").innerHTML=stats.map(s=>`<div class="stat"><div class="stat-top"><span>${s[0]} ${s[1]}</span></div><b>${s[2]}</b><div class="bar"><i style="width:${clamp(s[3])}%"></i></div></div>`).join("");
+ document.getElementById("sideInfo").innerHTML=[
+  ["💼 อาชีพ",G.job],["🏦 หนี้",money(G.debt)],["🏠 บ้าน",G.house?"มี":"ไม่มี"],
+  ["🚗 รถ",G.car?"มี":"ไม่มี"],["🏢 ธุรกิจ",G.business?"มี":"ไม่มี"],["📈 เงินลงทุน",money(G.invest)],
+  ["🎓 การศึกษา",G.degree?"จบปริญญา":"ยังไม่จบ"],["❤️ ความสัมพันธ์",G.married?"แต่งงานแล้ว":G.partner?"มีแฟน":"โสด"],["👶 ลูก",G.children+" คน"]
+ ].map(r=>`<div class="row"><span>${r[0]}</span><span class="value">${r[1]}</span></div>`).join("");
+ const goals=[
+  [G.degree,"🎓 เรียนจบมหาวิทยาลัย"],[G.house,"🏠 มีบ้าน"],[G.business,"🏢 สร้างธุรกิจ"],[G.married,"💍 แต่งงาน"],
+  [G.children>=2,"👶 มีลูก 2 คน"],[G.money>=1000000,"💰 มีเงิน 1 ล้านบาท"],[G.health>=90,"💪 สุขภาพ 90+"]
+ ];
+ document.getElementById("goals").innerHTML=goals.map(g=>`<div class="row"><span>${g[0]?"✅":"⬜"} ${g[1]}</span></div>`).join("");
+ document.getElementById("rarityBadge").textContent=currentEvent?.rarity||"MONTHLY";
+}
+
+function statEffect(label,val){let sign=val>=0?"+":"";return `<span class="effect ${val>=0?"good":"bad"}">${label} ${sign}${val}</span>`}
+function apply(c){
+ for(const [k,v] of Object.entries(c||{})){if(["message","good","achievement"].includes(k))continue;if(typeof G[k]==="number")G[k]+=v;else G[k]=v}
+ G.health=clamp(G.health);G.happy=clamp(G.happy);G.knowledge=clamp(G.knowledge);G.friends=clamp(G.friends);G.family=clamp(G.family);G.partnerRel=clamp(G.partnerRel);
+ if(c?.good)G.good++; else G.bad++;
+ if(c?.achievement && !G.achievements.includes(c.achievement))G.achievements.push(c.achievement);
+ if(c?.message)G.history.unshift(`${G.age} ปี ${G.month} เดือน — ${c.message}`);
+}
+
+const EVENTS=[
+ {r:"COMMON",w:60,icon:"☀️",title:"เดือนธรรมดา",desc:"ไม่มีอะไรหวือหวา แต่ชีวิตกำลังเดินหน้า งาน เงิน และความสัมพันธ์ยังต้องดูแล",choices:[
+  ["พักผ่อน", {happy:4,health:2,message:"พักเต็มที่จนมีแรงขึ้น"}],["อ่านหนังสือ",{knowledge:4,happy:-1,message:"ใช้เวลาพัฒนาตัวเอง"}],["ทำงานเพิ่ม",{money:3500,happy:-3,health:-2,message:"รับงานพิเศษได้เงินเพิ่ม"}]]},
+ {r:"COMMON",w:60,icon:"💰",title:"เงินเดือนออก",desc:"รายได้ประจำเข้าบัญชี และค่าใช้จ่ายประจำกำลังรออยู่",choices:[["เก็บเงิน",{money:1000,happy:1,message:"วางแผนการเงินดีขึ้น"}],["ซื้อของที่อยากได้",{money:-2500,happy:8,message:"ให้รางวัลตัวเอง"}]]},
+ {r:"COMMON",w:60,icon:"👨‍👩‍👧",title:"ครอบครัว",desc:"วันนี้ครอบครัวต้องการเวลาจากมึง",choices:[["กลับบ้าน",{money:-1200,happy:8,family:8,message:"ใช้เวลากับครอบครัว"}],["ทำงานต่อ",{money:1800,family:-5,happy:-2,message:"เลือกงานก่อนครอบครัว"}]]},
+ {r:"COMMON",w:60,icon:"🏋️",title:"เริ่มดูแลตัวเอง",desc:"มึงเริ่มจริงจังกับสุขภาพ",choices:[["ออกกำลังกาย",{health:6,happy:3,message:"สุขภาพดีขึ้น"}],["ไม่เอาดีกว่า",{happy:-1,message:"ยังคงใช้ชีวิตเหมือนเดิม"}]]},
+ {r:"UNCOMMON",w:25,icon:"💼",title:"ข้อเสนองานใหม่",desc:"บริษัทคู่แข่งเสนอเงินเดือนสูงกว่า แต่ต้องเริ่มใหม่",choices:[["รับงาน",{salary:12000,job:"พนักงานบริษัท",unemployed:false,knowledge:2,message:"ย้ายงานไปบริษัทใหม่"}],["อยู่ที่เดิม",{happy:2,message:"เลือกความมั่นคง"}]]},
+ {r:"UNCOMMON",w:25,icon:"🎓",title:"โอกาสเรียนต่อ",desc:"มีทุนบางส่วนสำหรับหลักสูตรที่ช่วยเปลี่ยนอนาคต",choices:[["เรียน",{money:-7000,knowledge:12,degree:true,message:"ลงทุนกับการศึกษา",achievement:"📚 คนรักการเรียน"}],["ไม่เรียน",{money:1500,message:"เก็บเงินไว้ก่อน"}]]},
+ {r:"UNCOMMON",w:25,icon:"❤️",title:"พบคนถูกใจ",desc:"คนคนหนึ่งเข้ามาทำให้ชีวิตมีสีสัน",choices:[["ทำความรู้จัก",{partner:true,partnerRel:20,happy:8,message:"เริ่มต้นความสัมพันธ์"}],["โฟกัสงาน",{knowledge:3,message:"ยังไม่พร้อมมีความรัก"}]]},
+ {r:"UNCOMMON",w:25,icon:"🚗",title:"รถมือสองราคาดี",desc:"เจอรถสภาพดีที่ราคาไม่แรง",choices:[["ซื้อ",{money:-85000,car:true,happy:5,message:"ซื้อรถคันแรก"}],["ผ่าน",{money:500,message:"ประหยัดเงินก้อนใหญ่"}]]},
+ {r:"RARE",w:10,icon:"📈",title:"หุ้นพุ่งแรง",desc:"สินทรัพย์ที่มึงถืออยู่ทะยานขึ้นจากข่าวใหญ่",choices:[["ขายทำกำไร",{money:45000,invest:-20000,message:"ขายหุ้นทำกำไร"}],["ถือต่อ",{invest:35000,happy:3,message:"ถือการลงทุนต่อ"}]]},
+ {r:"RARE",w:10,icon:"🏠",title:"บ้านในฝัน",desc:"โครงการใหม่เปิดขายในราคาที่มึงพอเอื้อมถึง",choices:[["ซื้อบ้าน",{money:-450000,house:true,property:450000,happy:12,message:"มีบ้านเป็นของตัวเอง",achievement:"🏠 เจ้าของบ้าน"}],["ยังไม่ซื้อ",{money:5000,message:"รอโอกาสที่เหมาะกว่า"}]]},
+ {r:"RARE",w:10,icon:"🚀",title:"ธุรกิจโตแบบก้าวกระโดด",desc:"ธุรกิจเล็ก ๆ ของมึงได้ลูกค้ารายใหญ่",choices:[["ขยายกิจการ",{money:70000,salary:45000,business:true,happy:10,message:"ธุรกิจเติบโตครั้งใหญ่",achievement:"🚀 ผู้ประกอบการ"}],["ไม่เสี่ยง",{money:18000,message:"รับกำไรแล้วพอ"}]]},
+ {r:"LEGENDARY",w:4,icon:"🎉",title:"ถูกรางวัลที่ 1!",desc:"ชีวิตมึงเปลี่ยนในคืนเดียว",choices:[["รับเงิน",{money:6000000,happy:25,message:"ถูกรางวัลที่ 1",achievement:"🎰 เศรษฐีสายฟ้า"}],["บริจาคบางส่วน",{money:4500000,happy:35,family:15,message:"แบ่งเงินไปช่วยคนอื่น",achievement:"❤️ ผู้ให้"}]]},
+ {r:"LEGENDARY",w:4,icon:"🍀",title:"ได้รับมรดก",desc:"ญาติทิ้งทรัพย์สินก้อนใหญ่ไว้ให้",choices:[["รับมรดก",{money:1800000,property:900000,happy:18,message:"ได้รับมรดก",achievement:"🍀 ทายาท"}],["จัดการอย่างระมัดระวัง",{money:1000000,invest:800000,knowledge:6,message:"แบ่งมรดกไปลงทุน"}]]},
+ {r:"???",w:1,icon:"🌌",title:"โอกาสครั้งเดียวในชีวิต",desc:"มีข้อเสนอที่ไม่มีใครอธิบายได้ว่ามันมาจากไหน",choices:[["เสี่ยง",{money:3000000,knowledge:20,happy:20,message:"คว้าโอกาสลึกลับ",achievement:"🌌 ???"}],["ปฏิเสธ",{health:5,knowledge:8,message:"เลือกความปลอดภัย"}]]},
+ {r:"UNCOMMON",w:25,icon:"💔",title:"ความสัมพันธ์มีปัญหา",desc:"ความเห็นต่างสะสมจนเริ่มหนักขึ้น",choices:[["คุยกัน",{partnerRel:15,happy:3,message:"ช่วยกันแก้ปัญหา"}],["เลิกกัน",{partner:false,married:false,partnerRel:-30,happy:-12,message:"จบความสัมพันธ์"}]]},
+ {r:"RARE",w:10,icon:"⚖️",title:"ปัญหาทางกฎหมาย",desc:"มีข้อพิพาทที่ต้องจัดการก่อนจะบานปลาย",choices:[["จ้างทนาย",{money:-50000,happy:-2,message:"จัดการคดีอย่างเป็นระบบ"}],["สู้เอง",{money:-15000,happy:-10,knowledge:5,message:"ประหยัดค่าทนายแต่เครียดหนัก"}]]},
+ {r:"RARE",w:10,icon:"🔥",title:"ไฟไหม้บ้าน",desc:"เหตุฉุกเฉินทำให้ทรัพย์สินเสียหาย",choices:[["ซ่อมทันที",{money:-160000,property:-120000,health:-5,happy:-12,message:"ซ่อมบ้านหลังเหตุไฟไหม้"}],["ปล่อยไว้ก่อน",{property:-180000,happy:-20,message:"บ้านเสียหายหนัก"}]]},
+ {r:"UNCOMMON",w:25,icon:"📉",title:"การลงทุนขาดทุน",desc:"ตลาดผันผวนแรง เงินลงทุนหายไปบางส่วน",choices:[["ขายตัดขาดทุน",{invest:-Math.round(G.invest*.5),happy:-5,message:"ยอมขาดทุนเพื่อหยุดเลือด"}],["ถือรอ",{happy:-2,message:"อดทนรอตลาดฟื้น"}]]},
+ {r:"RARE",w:10,icon:"🌪️",title:"ภัยธรรมชาติ",desc:"พายุรุนแรงกระทบพื้นที่ที่มึงอยู่",choices:[["อพยพ",{money:-12000,health:3,happy:-4,message:"ปลอดภัยจากภัยธรรมชาติ"}],["อยู่บ้าน",{money:-40000,health:-15,happy:-15,message:"ทรัพย์สินเสียหาย"}]]}
 ];
-function special(){
-if(G.recession&&G.unemployed&&G.money<7000)return["Uncommon",0,"🎲 เงินเริ่มหมด","หลังตกงาน เงินสำรองกำลังหายไป คุณต้องเลือกทางรอด",[
-["กู้เงิน","เงิน +50,000 / หนี้ +60,000",()=>{G.money+=50000;G.debt+=60000}],["หางานใหม่","เงินเดือน 25,000 / ความสุข +6",()=>{G.job="พนักงานบริษัท";G.salary=25000;G.unemployed=false;G.happy+=6}],["เริ่มธุรกิจ","เจ้าของกิจการ / เงิน -5,000",()=>{G.money-=5000;G.job="เจ้าของกิจการ";G.salary=35000;G.business=true;G.unemployed=false;G.knowledge+=8}]]];
-if(G.recession&&!G.unemployed)return["Uncommon",0,"🏢 บริษัทเริ่มปลดพนักงาน","เศรษฐกิจตกต่ำทำให้บริษัทลดคน งานของคุณกำลังสั่นคลอน",[
-["ยอมลดเงินเดือน","เงินเดือน -20%",()=>G.salary=Math.round(G.salary*.8)],["ลาออกก่อน","กลายเป็นคนว่างงาน / ความสุข -8",()=>{G.job="ว่างงาน";G.salary=0;G.unemployed=true;G.happy-=8}]]];
-return null}
-function pick(){
-let s=special();if(s)return s;
-if(!G.pandemic&&Math.random()<.025)return["Legendary",0,"🦠 เกิดการแพร่ระบาดครั้งใหญ่","รัฐประกาศมาตรการควบคุมโรค มหาวิทยาลัยปิดชั่วคราวและเศรษฐกิจชะลอตัว",[
-["อยู่บ้านดูแลตัวเอง","สุขภาพ -5 / ความสุข -8",()=>{G.health-=5;G.happy-=8;G.pandemic=true}],["ทำงานออนไลน์","เงิน +5,000 / สุขภาพ -8",()=>{G.money+=5000;G.health-=8;G.pandemic=true}]]];
-if(!G.recession&&Math.random()<.018&&G.year<8)return["Rare",0,"📉 เศรษฐกิจเริ่มตกต่ำ","ตลาดเริ่มชะลอตัว บริษัทจำนวนมากส่งสัญญาณลดต้นทุน นี่อาจเป็นจุดเริ่มต้นของ Chain",[
-["เก็บเงินสด","เข้าสู่ภาวะเศรษฐกิจตกต่ำ",()=>{G.recession=true}],["ลงทุนสวนตลาด","เงิน -20,000 / เข้าสู่ภาวะเสี่ยง",()=>{G.recession=true;G.money-=20000;G.invest+=2}]]];
-let total=E.reduce((a,e)=>a+e[1],0),r=Math.random()*total;for(const e of E){r-=e[1];if(r<=0)return e}return E[0]}
-function show(){current=pick();render();$("rarity").className="rarity "+current[0].toLowerCase().replace("???","mystery");$("rarity").textContent=current[0].toUpperCase();$("title").textContent=current[2];$("desc").textContent=current[3];$("effects").innerHTML=current[4].map(c=>`<div class="effect">${c[1]}</div>`).join("");$("choices").innerHTML=current[4].map((c,i)=>`<button class="choice" onclick="choose(${i})"><b>${c[0]}</b><span>${c[1]}</span></button>`).join("")}
-function choose(i){current[4][i][2]();G.events++;G.choices++;if(G.money<0){G.debt+=Math.abs(G.money);G.money=0;G.happy-=6;log("💸 เงินไม่พอ — ยอดที่ติดลบถูกเปลี่ยนเป็นหนี้")};log(`${current[2]} → <b>${current[4][i][0]}</b>`);next()}
-function next(){
-if(G.job==="นักศึกษา"){G.money+=3000;G.knowledge+=1}else if(G.salary>0)G.money+=G.salary;
-if(G.business)G.money+=10000+Math.floor(Math.random()*35000);
-if(!G.house)G.money-=3000;
-if(G.partner)G.happy+=.4;
-if(G.debt>0){let p=Math.min(G.money,Math.max(500,Math.round(G.debt*.025)));G.money-=p;G.debt-=p}
-G.health-=.15;G.happy-=.08;G.months++;
-if(G.months%12===0){G.age++;G.year++}
-G.health=clamp(G.health);G.happy=clamp(G.happy);G.knowledge=clamp(G.knowledge);
-if(G.health<=0||G.age>=80){end();return}show()}
-function stats(){$("modalTitle").textContent="📊 สถิติชีวิต";$("modalBody").innerHTML=`<div class="modalgrid">
-<div class="modalcard">💰 ทรัพย์สิน<br><b>${fmt(G.money)}</b> บาท</div><div class="modalcard">💳 หนี้<br><b>${fmt(G.debt)}</b> บาท</div>
-<div class="modalcard">❤️ สุขภาพ<br><b>${Math.round(G.health)}%</b></div><div class="modalcard">😊 ความสุข<br><b>${Math.round(G.happy)}%</b></div>
-<div class="modalcard">🧠 ความรู้<br><b>${Math.round(G.knowledge)}%</b></div><div class="modalcard">📅 อายุ<br><b>${G.age}</b> ปี</div>
-<div class="modalcard">📆 ผ่านมา<br><b>${G.months}</b> เดือน</div><div class="modalcard">🎲 เหตุการณ์<br><b>${G.events}</b> ครั้ง</div>
-<div class="modalcard">❤️ ความสัมพันธ์<br><b>${G.partner?"มีคู่":"โสด"}</b></div><div class="modalcard">🏠 บ้าน<br><b>${G.house?"มี":"ไม่มี"}</b></div>
-</div><p class="muted" style="margin-top:12px">💼 ${G.job} • 💵 รายได้ ${fmt(G.salary)} บาท/เดือน • 🏢 ธุรกิจ ${G.business?"มี":"ไม่มี"}</p>`;$("overlay").style.display="flex"}
-function closeModal(){$("overlay").style.display="none"}
-function end(){$("rarity").textContent="LIFE COMPLETE";$("title").textContent="🏁 เรื่องราวชีวิตของคุณจบลง";$("desc").textContent=`คุณใช้ชีวิตมาถึงอายุ ${G.age} ปี มีเงิน ${fmt(G.money)} บาท ความสุข ${Math.round(G.happy)}% และความรู้ ${Math.round(G.knowledge)}%`;$("effects").innerHTML="";$("choices").innerHTML=`<button class="choice" onclick="newLife()"><b>🔄 เริ่มชีวิตใหม่</b><span>สร้างเรื่องราวใหม่ตั้งแต่อายุ 18</span></button>`;log("🏁 จบชีวิต — ขอบคุณที่เล่น MY LIFE")}
-function newLife(){if(!confirm("เริ่มชีวิตใหม่? ความคืบหน้าปัจจุบันจะหาย"))return;G={...initial};$("log").innerHTML="";log("🎮 เริ่มต้นชีวิตใหม่ อายุ 18 ปี");render();show()}
-log("🎮 เริ่มต้นชีวิต อายุ 18 ปี — ขอให้โชคดี");render();show();
+
+function weightedPick(){
+ let arr=EVENTS.filter(e=>G.age<80);
+ if(G.trait==="lucky")arr=arr.map(e=>({...e,w:e.w*(e.r==="RARE"?1.7:e.r==="LEGENDARY"?2.3:e.r==="???"?3:1)}));
+ let total=arr.reduce((a,e)=>a+e.w,0),x=Math.random()*total;
+ for(const e of arr){x-=e.w;if(x<=0)return e}return arr[0]
+}
+function chainEvent(){
+ if(G.recession&&G.unemployed&&G.money<7000)return {r:"CHAIN",icon:"💸",title:"เงินเริ่มหมด",desc:"เศรษฐกิจยังไม่ฟื้น งานใหม่ก็ยังหาไม่ได้ ค่าใช้จ่ายเริ่มกินเงินเก็บ",choices:[
+  ["กู้เงิน",{money:50000,debt:60000,message:"กู้เงินประคองชีวิต"}],
+  ["หางานใหม่",{salary:28000,job:"พนักงานบริษัท",unemployed:false,money:5000,message:"ได้งานใหม่ท่ามกลางวิกฤต",achievement:"💼 นักสู้ตลาดแรงงาน"}],
+  ["เริ่มธุรกิจ",{business:true,salary:35000,money:-10000,unemployed:false,message:"เริ่มธุรกิจฝ่าวิกฤต",achievement:"🔥 กล้าสู้"}]]};
+ if(G.recession&&G.salary>0&&!G.unemployed&&Math.random()<.45)return {r:"CHAIN",icon:"🏢",title:"บริษัทเริ่มปลดพนักงาน",desc:"เศรษฐกิจถดถอยจนบริษัทต้องลดต้นทุน มึงถูกเรียกเข้าห้องประชุม",choices:[
+  ["ยอมลดเงินเดือน",{salary:-Math.round(G.salary*.2),happy:-5,message:"ยอมลดเงินเดือนเพื่อรักษางาน"}],
+  ["ลาออก",{salary:-G.salary,job:"ว่างงาน",unemployed:true,happy:-12,message:"ลาออกและเข้าสู่ช่วงตกงาน"}]]};
+ return null;
+}
+function nextEvent(){
+ render();
+ let e=chainEvent();
+ if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[
+  ["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],
+  ["ลงทุนสวนกระแส",{recession:true,invest:25000,money:-20000,knowledge:8,message:"เสี่ยงลงทุนในช่วงวิกฤต"}]]};
+ if(!e&&Math.random()<.012&&!G.pandemic)e={r:"CHAIN",icon:"🦠",title:"โรคระบาดใหญ่",desc:"เมืองประกาศมาตรการควบคุมโรค หลายธุรกิจหยุดชะงัก",choices:[
+  ["กักตัวและดูแลตัวเอง",{pandemic:true,health:4,money:-3000,happy:-5,message:"ผ่านช่วงโรคระบาดอย่างปลอดภัย"}],
+  ["ทำงานต่อ",{pandemic:true,health:-15,money:5000,happy:-8,message:"ยังทำงานต่อท่ามกลางโรคระบาด"}]]};
+ if(!e)e=weightedPick(); currentEvent=e; render(); drawEvent();
+}
+function drawEvent(){
+ const e=currentEvent;document.getElementById("rarityBadge").textContent=e.r;
+ document.getElementById("chainTag").textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":"";
+ document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">${e.icon}</div><h2>${e.title}</h2><p>${e.desc}</p><div class="choices">${e.choices.map((c,i)=>`<button class="choice" onclick="choose(${i})"><b>${c[0]}</b><small>เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน</small></button>`).join("")}</div></div>`;
+}
+function choose(i){
+ const e=currentEvent,c=e.choices[i], before=G.money;
+ apply(c[1]);G.events++;currentEvent=null;render();
+ document.getElementById("eventArea").innerHTML=`<div class="event-card"><div class="event-icon">✨</div><h2>ผลลัพธ์</h2><p>${c[1].message||"เดือนนี้จบลงแล้ว"}</p><div class="effects">${c[1].money?statEffect("💰 เงิน",c[1].money):""}${c[1].health?statEffect("❤️ สุขภาพ",c[1].health):""}${c[1].happy?statEffect("😊 ความสุข",c[1].happy):""}${c[1].knowledge?statEffect("🧠 ความรู้",c[1].knowledge):""}${c[1].salary?statEffect("💼 เงินเดือน",c[1].salary):""}</div><button class="primary" onclick="advance()">▶️ ไปเดือนถัดไป</button></div>`;
+ saveGame();
+}
+function advance(){
+ if(G.salary>0&&!G.unemployed){G.money+=G.salary;G.money-=9000;if(G.house)G.money-=3500;if(G.car)G.money-=2200;if(G.business)G.money+=Math.round(G.salary*.18)}
+ else G.money-=6500;
+ if(G.debt>0){let pay=Math.min(G.debt,Math.max(0,Math.round(G.debt*.025)));G.debt-=pay;G.money-=pay}
+ if(G.pandemic){G.happy-=1;if(Math.random()<.08)G.pandemic=false}
+ G.month++;G.months++;
+ if(G.month>12){G.month=1;G.year++;G.age++;yearly()}
+ if(G.money<0)G.happy-=3;
+ if(G.health<=0||G.age>=80){endGame();return}
+ saveGame();nextEvent();
+}
+function yearly(){
+ if(G.age===22&&!G.degree){G.degree=true;G.knowledge+=10;G.history.unshift("22 ปี — เรียนจบมหาวิทยาลัยและเริ่มต้นชีวิตการทำงาน")}
+ if(G.age===22&&G.job==="นักศึกษา"){G.job="พนักงานบริษัท";G.salary=18000}
+ if(G.age===25&&G.partner&&!G.married){G.married=true;G.happy+=10;G.history.unshift("25 ปี — ตัดสินใจแต่งงาน")}
+ if(G.age===28&&G.married&&G.children===0){G.children=1;G.money-=25000;G.happy+=12;G.history.unshift("28 ปี — มีลูกคนแรก")}
+ if(G.age===35&&G.married&&G.children===1){G.children=2;G.money-=30000;G.happy+=10;G.history.unshift("35 ปี — มีลูกคนที่สอง")}
+ if(G.age%5===0)G.knowledge+=2;
+}
+function showTab(tab,btn){
+ document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+ let html="";
+ if(tab==="life")html=`<h3>📊 สถานะชีวิต</h3><div class="row"><span>เดือนที่เล่น</span><b>${G.months}</b></div><div class="row"><span>เหตุการณ์</span><b>${G.events}</b></div><div class="row"><span>เหตุการณ์ดี/ร้าย</span><b>${G.good}/${G.bad}</b></div><div class="row"><span>Trait</span><b>${TRAITS[G.trait]}</b></div>`;
+ if(tab==="assets")html=`<h3>💰 ทรัพย์สิน</h3><div class="row"><span>เงินสด</span><b>${money(G.money)}</b></div><div class="row"><span>บ้าน</span><b>${G.house?"มี • "+money(G.property):"ไม่มี"}</b></div><div class="row"><span>รถ</span><b>${G.car?"มี":"ไม่มี"}</b></div><div class="row"><span>ลงทุน</span><b>${money(G.invest)}</b></div><div class="row"><span>หนี้</span><b>${money(G.debt)}</b></div>`;
+ if(tab==="people")html=`<h3>👥 คนรอบตัว</h3><div class="row"><span>ครอบครัว</span><b>${G.family}/100</b></div><div class="row"><span>เพื่อน</span><b>${G.friends}/100</b></div><div class="row"><span>ความรัก</span><b>${G.partner?(G.married?"คู่ชีวิต":"แฟน"):"โสด"}</b></div><div class="row"><span>ลูก</span><b>${G.children} คน</b></div>`;
+ if(tab==="history")html=`<h3>📜 ประวัติชีวิต</h3><div class="list">${(G.history.length?G.history:["ยังไม่มีเหตุการณ์สำคัญ"]).slice(0,40).map(x=>`<div class="list-item">${esc(x)}</div>`).join("")}</div>`;
+ document.getElementById("tabArea").innerHTML=html;
+}
+function endGame(){
+ saveGame();document.getElementById("modalContent").innerHTML=`<div style="text-align:center"><div style="font-size:58px">🏆</div><h2>จบชีวิตของ ${esc(G.name)}</h2><p class="muted">อายุ ${G.age} ปี • ใช้ชีวิตมา ${G.months} เดือน</p><div class="list"><div class="list-item">💰 เงินสุดท้าย: <b>${money(G.money)}</b></div><div class="list-item">❤️ สุขภาพ: <b>${G.health}</b></div><div class="list-item">😊 ความสุข: <b>${G.happy}</b></div><div class="list-item">🧠 ความรู้: <b>${G.knowledge}</b></div><div class="list-item">🏆 Achievement: <b>${G.achievements.length}</b></div></div><button class="primary big" onclick="newGame()">เริ่มชีวิตใหม่</button></div>`;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+window.addEventListener("load",()=>{if(localStorage.getItem(KEY)){document.getElementById("continueBox").classList.remove("hidden");document.getElementById("continueBox").innerHTML=`มีเซฟของ <b>ชีวิตเดิม</b> อยู่ในเครื่อง <button class="primary" onclick="loadGame()">▶️ เล่นต่อ</button>`}});
+render();
+
 </script>
-</body></html>
+</body>
+</html>
