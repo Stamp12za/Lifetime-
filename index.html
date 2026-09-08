@@ -286,36 +286,67 @@ function showEventError(err){
 
 function nextEvent(){
  try{
-  if(!G)return;
+  if(!G) throw new Error("ยังไม่มีข้อมูลชีวิต");
+  const area=document.getElementById("eventArea");
   const phase=document.getElementById("monthPhase"),badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag");
-  if(phase)phase.textContent="🎲 เหตุการณ์ประจำเดือน";
-  if(badge)badge.textContent="ROLLING";
-  if(tag)tag.textContent="สุ่มเหตุการณ์";
-  let e=chainEvent();
-  if(!e&&Math.random()<.018&&!G.recession&&G.age<55)e={r:"CHAIN",icon:"📉",title:"เศรษฐกิจเริ่มตกต่ำ",desc:"ตลาดชะลอตัว บริษัทเริ่มลดงบ และข่าวการเลิกจ้างเต็มไปหมด",choices:[["ตั้งรับ",{recession:true,money:-1500,happy:-4,knowledge:4,message:"เตรียมตัวรับเศรษฐกิจถดถอย"}],["ลงทุนสวนกระแส",{recession:true,invest:25000,money:-20000,knowledge:8,message:"เสี่ยงลงทุนในช่วงวิกฤต"}]]};
-  if(!e&&!G.pandemic&&Math.random()<.012)e={r:"CHAIN",icon:"🦠",title:"โรคระบาดใหญ่",desc:"เมืองประกาศมาตรการควบคุมโรค หลายธุรกิจหยุดชะงัก",choices:[["กักตัวและดูแลตัวเอง",{pandemic:true,health:4,money:-3000,happy:-5,message:"ผ่านช่วงโรคระบาดอย่างปลอดภัย"}],["ทำงานต่อ",{pandemic:true,health:-15,money:5000,happy:-8,message:"ยังทำงานต่อท่ามกลางโรคระบาด"}]]};
-  if(!e)e=weightedPick();
-  if(!e)e={r:"COMMON",icon:"☀️",title:"วันธรรมดา",desc:"เดือนนี้ไม่มีเหตุการณ์พิเศษ แต่ชีวิตยังเดินต่อไป",choices:[["เดินหน้าต่อ",{happy:2,knowledge:1,message:"ใช้ชีวิตต่ออย่างมั่นคง"}]]};
-  currentEvent=e; drawEvent();
+  if(phase) phase.textContent="🎲 เหตุการณ์ประจำเดือน";
+  if(badge) badge.textContent="ROLLING";
+  if(tag) tag.textContent="สุ่มเหตุการณ์";
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>กำลังสุ่มเหตุการณ์...</h2><p>กำลังเลือกเหตุการณ์ให้มึง</p></div>';
+
+  // ใช้การสุ่มแบบตรงไปตรงมา ไม่พึ่ง chainEvent/weightedPick ในจังหวะแรก
+  let pool=EVENTS.filter(e=>e && Array.isArray(e.choices) && e.choices.length && G.age<80);
+  if(!pool.length) throw new Error("ไม่พบรายการเหตุการณ์");
+
+  // รองรับ event chain แต่ถ้ามีปัญหาให้ fallback เป็น event ปกติทันที
+  let e=null;
+  try{ e=chainEvent(); }catch(chainErr){ console.warn("chainEvent fallback",chainErr); }
+  if(!e){
+    let total=pool.reduce((sum,item)=>sum+(Number(item.w)||1),0);
+    let roll=Math.random()*total;
+    for(const item of pool){
+      roll-=Number(item.w)||1;
+      if(roll<=0){e=item;break;}
+    }
+    if(!e)e=pool[0];
+  }
+  if(!e || !Array.isArray(e.choices) || !e.choices.length) e=pool[0];
+  currentEvent=e;
+  drawEvent();
  }catch(err){
   console.error("nextEvent",err);
   const area=document.getElementById("eventArea");
-  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">🎲</div><h2>สุ่มเหตุการณ์ไม่สำเร็จ</h2><p>กดปุ่มด้านล่างเพื่อสุ่มใหม่</p><button type="button" class="primary big" onclick="nextEvent()">🎲 สุ่มเหตุการณ์</button></div>';
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>สุ่มเหตุการณ์ไม่สำเร็จ</h2><p>กดปุ่มด้านล่างเพื่อสุ่มใหม่</p><button type="button" class="primary big" onclick="window.nextEvent()">🎲 สุ่มเหตุการณ์ใหม่</button></div>';
  }
 }
 function drawEvent(){
- const e=currentEvent;
- if(!e){showEventError(new Error("ไม่มีเหตุการณ์"));return;}
- const badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag"),area=document.getElementById("eventArea");
- if(badge)badge.textContent=e.r; if(tag)tag.textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":""; if(!area)return;
- area.replaceChildren();
- const card=document.createElement("div");card.className="event-card";
- const icon=document.createElement("div");icon.className="event-icon";icon.textContent=e.icon;
- const h=document.createElement("h2");h.textContent=e.title;
- const p=document.createElement("p");p.textContent=e.desc;
- const choices=document.createElement("div");choices.className="choices";
- e.choices.forEach((c,i)=>{const b=document.createElement("button");b.type="button";b.className="choice";const strong=document.createElement("b");strong.textContent=c[0];const small=document.createElement("small");small.textContent="เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน";b.append(strong,small);b.addEventListener("click",()=>choose(i));choices.appendChild(b)});
- card.append(icon,h,p,choices);area.appendChild(card);
+ try{
+  const e=currentEvent;
+  if(!e || !Array.isArray(e.choices) || !e.choices.length) throw new Error("เหตุการณ์ไม่มีตัวเลือก");
+  const badge=document.getElementById("rarityBadge"),tag=document.getElementById("chainTag"),area=document.getElementById("eventArea");
+  if(!area) throw new Error("ไม่พบ eventArea");
+  if(badge) badge.textContent=e.r||"COMMON";
+  if(tag) tag.textContent=e.r==="CHAIN"?"🔗 EVENT CHAIN":"";
+  area.innerHTML="";
+  const card=document.createElement("div"); card.className="event-card";
+  card.innerHTML='<div class="event-icon">'+(e.icon||"🎲")+'</div>'+
+    '<h2>'+esc(e.title||"เหตุการณ์ประจำเดือน")+'</h2>'+
+    '<p>'+esc(e.desc||"มีเหตุการณ์เกิดขึ้นในเดือนนี้")+'</p>';
+  const choices=document.createElement("div"); choices.className="choices";
+  e.choices.forEach((c,i)=>{
+    if(!Array.isArray(c) || !c[1]) return;
+    const b=document.createElement("button"); b.type="button"; b.className="choice";
+    b.innerHTML='<b>'+esc(c[0]||"เลือก")+'</b><small>เลือกทางนี้เพื่อกำหนดผลลัพธ์ของเดือน</small>';
+    b.onclick=function(ev){ev.preventDefault();ev.stopPropagation();window.choose(i);};
+    choices.appendChild(b);
+  });
+  if(!choices.children.length) throw new Error("เหตุการณ์ไม่มีตัวเลือกที่ใช้ได้");
+  card.appendChild(choices); area.appendChild(card);
+ }catch(err){
+  console.error("drawEvent",err);
+  const area=document.getElementById("eventArea");
+  if(area) area.innerHTML='<div class="event-card"><div class="event-icon">⚠️</div><h2>แสดงเหตุการณ์ไม่ได้</h2><p>กูใส่ปุ่มสุ่มใหม่ไว้ให้แล้ว</p><button type="button" class="primary big" onclick="window.nextEvent()">🎲 สุ่มเหตุการณ์ใหม่</button></div>';
+ }
 }
 function choose(i){
  const e=currentEvent,c=e.choices[i], before=G.money;
